@@ -56,19 +56,23 @@ float readPHSensor(int analogPin, int temperature)
   //float ph = analogRead(analogPin);
   //return ph * 0.017;
   static unsigned long timepoint = millis();
-  if(millis()-timepoint>1000U){ 
+  if (millis() - timepoint > 1000U) {
     timepoint = millis();
     Temperaturet = (uint8_t)temperature;
-    Voltage = analogRead(analogPin)/1024.0*5000; 
-    PHValue = ph.readPH(Voltage,Temperaturet);
+    Voltage = analogRead(analogPin) / 1024.0 * 5000;
+    PHValue = ph.readPH(Voltage, Temperaturet);
     return PHValue;
   }
-  ph.calibration(Voltage,Temperaturet);  
+  ph.calibration(Voltage, Temperaturet);
+  return PHValue;
 }
 
 float readTurbiditySensor(int analogPin)
 {
-  float v = analogRead(analogPin);
+  float v = analogRead(analogPin) * 5.0 / 1024;
+  if (v < 2.5)
+    return 3000;
+
   return (-1120.4 * sq(v) + 5742.3 * v - 4352.9);
 }
 
