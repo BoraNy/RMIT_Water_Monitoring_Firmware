@@ -62,11 +62,11 @@ class MainMonitoringUI:
     def run(self):
         screen.fill(WHITE)
         
-        value = randint(0, 5000)                       # <-- Simulate Changing Dissolve Oxygen
-        self.DissolvedOxygenOdometer.draw(half_width, half_height, 100, map(value, 0, 5000, 0, 360), LIGHT_BLUE)
+        value = randint(0, 5000)             # <-- Simulate Changing Dissolve Oxygen
+        self.DissolvedOxygenOdometer.draw(250, 200, 100, map(value, 0, 5000, 0, 360), LIGHT_BLUE)
         
-        value1 = randint(0, 150)                       # <-- Simulate Changing Temperature
-        self.TemperatureOdometer.draw(190, 350, 70, map(value1, 0, 150, 0, 360), GREEN)
+        value1 = randint(0, 150)             # <-- Simulate Changing Temperature
+        self.TemperatureOdometer.draw(250, 500, 100, map(value1, 0, 150, 0, 360), GREEN)
         
         
         sleep(0.5)
