@@ -23,5 +23,4 @@ void loop()
   Serial.print(",");
   Serial.print(temperature);
   Serial.println();
-  delay(1000);
 }

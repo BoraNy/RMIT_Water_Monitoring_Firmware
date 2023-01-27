@@ -18,7 +18,6 @@ void loop()
     }
     else {
       data2read[charIndex] = '\0';
-      Serial.print("Data: ");
       Serial.println(data2read);
       charIndex = 0;
     }
