@@ -78,8 +78,10 @@ float readPHSensor(int analogPin, int temperature)
 float readTurbiditySensor(int analogPin)
 {
   float v = analogRead(analogPin) * 5.0 / 1024;
-  if (v < 2.5)
+  if (v <= 2.5)
     return 3000;
+  if (v >= 4.2002)
+    return 0;
 
   return (-1120.4 * sq(v) + 5742.3 * v - 4352.9);
 }
