@@ -10,6 +10,7 @@ struct sensor_s
   char data[50];
 } sensor;
 
+static unsigned long tick = 0;
 float2int_S PH, dissOxygen, tempC;
 
 void setup()
@@ -33,8 +34,12 @@ void loop()
   dissOxygen.float2int(sensor.dissOxygen, TWO_DIGIT_PRECISION);
 
   // serialDebug();
-  sendDataToMain();
 
+  if (millis() - tick >= 1000)
+  {
+    tick = millis();
+    sendDataToMain();
+  }
 }
 
 void sendDataToMain(void)

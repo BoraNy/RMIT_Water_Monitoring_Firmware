@@ -8,7 +8,7 @@ class SerialCommunication:
         for port in self.ports:
             if 'USB-SERIAL CH340' in port.description:#USB-SERIAL CH340
                 self.hardwarePort = port.device
-        self.hardwareSerial = serial.Serial(self.hardwarePort, baudrate, timeout=10)
+        self.hardwareSerial = serial.Serial(self.hardwarePort, baudrate)
     
     def read(self):
         data = str(self.hardwareSerial.readline())

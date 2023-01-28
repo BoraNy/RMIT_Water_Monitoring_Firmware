@@ -1,12 +1,8 @@
 import ttkbootstrap as ttk
-import matplotlib
 from serialModule import SerialCommunication
-from random import randint
 from tkinter import *
 from ttkbootstrap.constants import *
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import (
-    FigureCanvasTkAgg, NavigationToolbar2Tk)
+from time import strftime
 
 pH, DO, Temperature, Turbidity = 0, 0, 0, 0
 
@@ -19,6 +15,14 @@ window.title("Water Quality Monitoring")
 tille_monitor = Label(window, text=" Water Quality Monitoring ",
                       foreground="Green", font=("Times New Roman bold italic", 25))
 tille_monitor.place(x=755, y=10)
+
+# --> Time 
+def time():
+    string = strftime('%A %x\n%H:%M:%S %p')
+    label.config(text="" + string)
+    label.after(1000, time)
+label = Label(window,font=("Times New Roman", 18),foreground="black")
+label.place(x=1400, y=110)
 
 # --> NPIC Logo
 npic_logo = Canvas(window, width=100, height=100)
@@ -95,5 +99,6 @@ def readArduinoSerial():
     window.after(1000, readArduinoSerial)
 
 if __name__ == '__main__':
+    time()
     window.after(1000, readArduinoSerial)
     window.mainloop()

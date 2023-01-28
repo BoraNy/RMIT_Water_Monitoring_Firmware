@@ -72,7 +72,6 @@ float readPHSensor(int analogPin, int temperature)
     return PHValue;
   }
   ph.calibration(Voltage, Temperaturet);
-  return PHValue;
 }
 
 float readTurbiditySensor(int analogPin)
