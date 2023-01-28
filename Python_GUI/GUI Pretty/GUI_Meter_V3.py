@@ -132,9 +132,9 @@ def readArduinoSerial():
 
     try:
         data = arduino.read()
-        Turbidity = float(data[0])
+        Turbidity = float(data[0])/100
         pH = float(data[1])
-        DO = float(data[2])
+        dissolvedOxygen = float(data[2])/100
         Temperature = float(data[3])
 
         # --- Change Color Info Here
@@ -152,22 +152,37 @@ def readArduinoSerial():
             pHInfoState = 'ALKALINE'
 
         if (dissolvedOxygen >= 0) and (dissolvedOxygen <= 4):
+            oxygenCircle.configure(bootstyle=DANGER)
             DOInfoState = 'DEADLY'
         elif (dissolvedOxygen > 4) and (dissolvedOxygen <= 6.5):
+            oxygenCircle.configure(bootstyle=WARNING)
             DOInfoState = 'POOR'
         elif (dissolvedOxygen > 6.5) and (dissolvedOxygen <= 9.5):
+            oxygenCircle.configure(bootstyle=SUCCESS)
             DOInfoState = 'GOOD'
-        elif (dissolvedOxygen > 4):
+        elif (dissolvedOxygen > 9.5):
+            oxygenCircle.configure(bootstyle=PRIMARY)
             DOInfoState = 'EXCELLENT'
 
         if (Turbidity >= 0) and (Turbidity <= 500):
+            turCircle.configure(bootstyle=DANGER)
             TurbidityInfoState = 'LOW'
         elif (Turbidity > 500) and (Turbidity <= 1000):
+            turCircle.configure(bootstyle=WARNING)
             TurbidityInfoState = 'MEDIUM'
         elif (Turbidity > 1000):
+            turCircle.configure(bootstyle=PRIMARY)
             TurbidityInfoState = 'HIGH'
 
-        TemperatureInfoState = 'NORMAL'
+        if (Temperature >= 0) and (Temperature <= 10):
+            temCircle.configure(bootstyle=DANGER)
+            TemperatureInfoState = 'COLD'
+        elif (Temperature > 10) and (Temperature <= 35):
+            temCircle.configure(bootstyle=SUCCESS)
+            TemperatureInfoState = 'NORMAL'
+        elif (Temperature > 35):
+            temCircle.configure(bootstyle=WARNING)
+            TemperatureInfoState = 'WARNING'
 
         # Assign Value to Dashboard
         temCircle.configure(amountused=Temperature)
