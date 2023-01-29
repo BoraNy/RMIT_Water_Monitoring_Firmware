@@ -1,4 +1,4 @@
-const uint8_t bufferlength = 50;
+const int bufferlength = 50;
 char data2read [bufferlength];
 uint8_t charIndex = 0 ;
 char inByte;
