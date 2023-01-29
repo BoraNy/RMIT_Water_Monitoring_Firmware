@@ -14,19 +14,22 @@ window.title("Water Quality Monitoring")
 # --> Title " Water Quality Monitoring "
 tille_monitor = Label(window, text=" Water Quality Monitoring ",
                       foreground="Green", font=("Arial bold", 25))
-tille_monitor.place(x=830, y=68)
+tille_monitor.place(x=830, y=75)
+'''
+# --> Frame
 
+frame = Frame(window,width=800,height=800,highlightbackground='red',highlightthickness=2)
+frame.place(x=10,y=140)
+'''
 # --> Time
-
 
 def time():
     string = strftime('%A %x\n%H:%M:%S %p')
     label.config(text="" + string.upper())
     label.after(1000, time)
 
-
 label = Label(window, font=("Arial", 18), foreground="black")
-label.place(x=1550, y=75)
+label.place(x=1550, y=60)
 
 
 # --- Label for Hazard
@@ -39,7 +42,7 @@ def pHInfo():
 
 
 label1 = Label(window, font=("Arial", 18), foreground="black")
-label1.place(x=850, y=180)
+label1.place(x=950, y=180)
 
 DOInfoState = ''
 
@@ -50,7 +53,7 @@ def DOInfo():
 
 
 label2 = Label(window, font=("Arial", 18), foreground="black")
-label2.place(x=850, y=230)
+label2.place(x=950, y=230)
 
 TurbidityInfoState = ''
 
@@ -61,7 +64,7 @@ def TurbidityInfo():
 
 
 label3 = Label(window, font=("Arial", 18), foreground="black")
-label3.place(x=850, y=280)
+label3.place(x=950, y=280)
 
 TemperatureInfoState = ''
 
@@ -72,7 +75,7 @@ def TemperatureInfo():
 
 
 label4 = Label(window, font=("Arial", 18), foreground="black")
-label4.place(x=850, y=330)
+label4.place(x=950, y=330)
 
 # --> NPIC Logo
 npic_logo = Canvas(window, width=100, height=100)
@@ -93,7 +96,7 @@ temCircle = ttk.Meter(window, amounttotal=150  # --> Maximum Value
                       , metersize=250   # --> Radius of Circle
                       , meterthickness=20  # --> Width of Circle
                       , bootstyle=PRIMARY, interactive=False, textfont=["Arial", 26, 'bold'], textright="°C", subtext="Temperature", subtextfont=["Arial", 15, "bold"])
-temCircle.place(x=50, y=200)
+temCircle.place(x=70, y=200)
 
 # --> Turbidity
 turCircle = ttk.Meter(window, amounttotal=3000  # --> Maximum Value
@@ -101,7 +104,7 @@ turCircle = ttk.Meter(window, amounttotal=3000  # --> Maximum Value
                       , metersize=250   # --> Radius of Circle
                       , meterthickness=20  # --> Width of Circle
                       , bootstyle=PRIMARY, interactive=False, textfont=["Arial", 26, 'bold'], textright="NTU", subtext="Turbidity", subtextfont=["Arial", 15, "bold"])
-turCircle.place(x=400, y=200)
+turCircle.place(x=450, y=200)
 
 # --> Potential of Hydrogen
 phCircle = ttk.Meter(window, amounttotal=14  # --> Maximum Value
@@ -109,7 +112,7 @@ phCircle = ttk.Meter(window, amounttotal=14  # --> Maximum Value
                      , metersize=250   # --> Radius of Circle
                      , meterthickness=20  # --> Width of Circle
                      , bootstyle=PRIMARY, interactive=False, textfont=["Arial", 26, 'bold'], textright="PH", subtext="pH", subtextfont=["Arial", 15, "bold"])
-phCircle.place(x=50, y=550)
+phCircle.place(x=70, y=550)
 
 # --> Oxygen
 oxygenCircle = ttk.Meter(window, amounttotal=20  # --> Maximum Value for sensor is 20mg/L
@@ -117,7 +120,14 @@ oxygenCircle = ttk.Meter(window, amounttotal=20  # --> Maximum Value for sensor 
                          , metersize=250   # --> Radius of Circle
                          , meterthickness=20  # --> Width of Circle
                          , bootstyle=PRIMARY, interactive=False, textfont=["Arial", 26, 'bold'], textright="mg/l", subtext="Oxygen", subtextfont=["Arial", 15, "bold"])
-oxygenCircle.place(x=400, y=550)
+oxygenCircle.place(x=450, y=550)
+
+# --> Quality Index
+quality_logo = Canvas(window, width=800, height=100)
+quality_logo.place(x=950, y=400)
+Quality_logo = PhotoImage(file="Quality_Index.png")
+quality_logo.create_image(False, False, anchor=NW, image=Quality_logo)
+
 
 # --> Read Serial
 
