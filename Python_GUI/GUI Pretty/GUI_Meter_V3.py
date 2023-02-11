@@ -15,18 +15,14 @@ window.title("Water Quality Monitoring")
 tille_monitor = Label(window, text=" Water Quality Monitoring ",
                       foreground="Green", font=("Arial bold", 25))
 tille_monitor.place(x=830, y=75)
-'''
-# --> Frame
 
-frame = Frame(window,width=800,height=800,highlightbackground='red',highlightthickness=2)
-frame.place(x=10,y=140)
-'''
 # --> Time
 
 def time():
     string = strftime('%A %x\n%H:%M:%S %p')
     label.config(text="" + string.upper())
     label.after(1000, time)
+
 
 label = Label(window, font=("Arial", 18), foreground="black")
 label.place(x=1550, y=60)
@@ -144,7 +140,7 @@ def readArduinoSerial():
         data = arduino.read()
         Turbidity = float(data[0])/100
         pH = float(data[1])
-        dissolvedOxygen = float(data[2])/100
+        dissolvedOxygen = float(data[2])/1000
         Temperature = float(data[3])
 
         # --- Change Color Info Here
