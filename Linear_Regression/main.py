@@ -1,0 +1,104 @@
+import numpy
+import matplotlib.pyplot as plt
+from drawnow import*
+from random import uniform
+
+
+class LiveDataMonitoring:
+    def __init__(self) -> None:
+        self.counter = 0
+        self.temperature, self.predictedTempearture = [], []
+        self.pH, self.predictedpH = [], []
+        self.turbidity, self.predictedTurbidity = [], []
+        self.dissolvedOxygen, self.predictedDissolvedOxygen = [], []
+
+        plt.ion()
+
+    def createFigure(self):
+        plt.subplot(221)
+        plt.plot(self.temperature,
+                 label=f'Temperature = {self.temperature[len(self.temperature)-1]:.2f}°C')
+        plt.ylim(0, 50)
+        plt.legend(loc='upper left')
+        plt2 = plt.twinx()
+        plt2.plot(self.predictedTempearture, 'r--',
+                  label=f'Predicted = {self.predictedTempearture[len(self.predictedTempearture)-1]:.2f}°C')
+        plt.ylim(0, 50)
+        plt2.legend(loc='lower left')
+
+        plt.subplot(222)
+        plt.plot(self.pH, label=f'pH = {self.pH[len(self.pH)-1]:.2f}')
+        plt.ylim(0, 14)
+        plt.legend(loc='upper left')
+        plt3 = plt.twinx()
+        plt3.plot(self.predictedpH, 'r--',
+                  label=f'Predicted = {self.predictedpH[len(self.predictedpH)-1]:.2f}')
+        plt.ylim(0, 14)
+        plt3.legend(loc='lower left')
+
+        plt.subplot(223)
+        plt.plot(self.turbidity,
+                 label=f'Turbidity = {self.turbidity[len(self.turbidity)-1]:.2f}NTU')
+        plt.ylim(0, 3000)
+        plt.legend(loc='upper left')
+        plt4 = plt.twinx()
+        plt4.plot(self.predictedTurbidity, 'r--',
+                  label=f'Predicted = {self.predictedTurbidity[len(self.predictedTurbidity)-1]:.2f}NTU')
+        plt.ylim(0, 3000)
+        plt4.legend(loc='lower left')
+
+        plt.subplot(224)
+        plt.plot(self.dissolvedOxygen,
+                 label=f'Dissolved Oxygen = {self.dissolvedOxygen[len(self.dissolvedOxygen)-1]:.2f}mg/L')
+        plt.ylim(0, 30)
+        plt.legend(loc='upper left')
+        plt4 = plt.twinx()
+        plt4.plot(self.predictedDissolvedOxygen, 'r--',
+                  label=f'Predicted = {self.predictedDissolvedOxygen[len(self.predictedDissolvedOxygen)-1]:.2f}mg/L')
+        plt.ylim(0, 30)
+        plt4.legend(loc='lower left')
+
+    def visualize(self, temperature, predictedTemperature, pH, predictedpH, turbidity, predictedTurbidity, dissolvedOxygen, predictedDissolveOxygen):
+        # Get Raw Data Update
+        self.temperature.append(temperature)
+        self.pH.append(pH)
+        self.turbidity.append(turbidity)
+        self.dissolvedOxygen.append(dissolvedOxygen)
+
+        # Get Predicted Data Update
+        self.predictedTempearture.append(predictedTemperature)
+        self.predictedpH.append(predictedpH)
+        self.predictedTurbidity.append(predictedTurbidity)
+        self.predictedDissolvedOxygen.append(predictedDissolveOxygen)
+
+        drawnow(self.createFigure)
+        plt.pause(1e-6)
+        self.counter += 1
+        if self.counter > 60:
+            self.temperature.pop(0)
+            self.predictedTempearture.pop(0)
+
+            self.pH.pop(0)
+            self.predictedpH.pop(0)
+
+            self.turbidity.pop(0)
+            self.predictedTurbidity.pop(0)
+
+            self.dissolvedOxygen.pop(0)
+            self.predictedDissolvedOxygen.pop(0)
+
+
+if __name__ == '__main__':
+    live = LiveDataMonitoring()
+    while True:
+        # Generate Random Number
+        a = uniform(25.0, 26.0)
+        b = uniform(6.0, 7.0)
+        c = uniform(300.0, 450.0)
+        d = uniform(15.0, 17.0)
+
+        live.visualize(a, a+uniform(-1.0, 1.0),
+                       b, b+uniform(-0.5, 0.5),
+                       c, c+uniform(-1.0, 1.0),
+                       d, d+uniform(-1.0, 1.0),
+                       )
