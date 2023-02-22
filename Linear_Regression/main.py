@@ -1,4 +1,4 @@
-import numpy
+import os
 import matplotlib.pyplot as plt
 from drawnow import*
 from random import uniform
@@ -12,7 +12,21 @@ class LiveDataMonitoring:
         self.turbidity, self.predictedTurbidity = [], []
         self.dissolvedOxygen, self.predictedDissolvedOxygen = [], []
 
+        # For Detect Missing Log File
+        files = os.listdir('./')
+        if 'monitoring_data_logging.csv' not in files:
+            logFile = open('monitoring_data_logging.csv', 'w')
+            logFile.write('Temperature,pH,Turbidity,DissolvedOxygen\n')
+            logFile.close()
+
+        # For Live Matplotlib
         plt.ion()
+
+    def logDataToFile(self):
+        with open('./monitoring_data_logging.csv', 'a+') as logFile:
+            logFile.write(
+                f'{self.temperature[len(self.temperature)-1]:.2f},{self.pH[len(self.pH)-1]:.2f},{self.turbidity[len(self.turbidity)-1]:.2f},{self.dissolvedOxygen[len(self.dissolvedOxygen)-1]:.2f}\n')
+            logFile.close()
 
     def createFigure(self):
         plt.subplot(221)
@@ -102,3 +116,4 @@ if __name__ == '__main__':
                        c, c+uniform(-1.0, 1.0),
                        d, d+uniform(-1.0, 1.0),
                        )
+        live.logDataToFile()
