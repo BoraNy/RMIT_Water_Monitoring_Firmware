@@ -2,6 +2,7 @@ import os
 import matplotlib.pyplot as plt
 from drawnow import*
 from random import uniform
+from datetime import datetime
 
 
 class LiveDataMonitoring:
@@ -16,7 +17,7 @@ class LiveDataMonitoring:
         files = os.listdir('./')
         if 'monitoring_data_logging.csv' not in files:
             logFile = open('monitoring_data_logging.csv', 'w')
-            logFile.write('Temperature,pH,Turbidity,DissolvedOxygen\n')
+            logFile.write('Time,Temperature,pH,Turbidity,DissolvedOxygen\n')
             logFile.close()
 
         # For Live Matplotlib
@@ -25,7 +26,7 @@ class LiveDataMonitoring:
     def logDataToFile(self):
         with open('./monitoring_data_logging.csv', 'a+') as logFile:
             logFile.write(
-                f'{self.temperature[len(self.temperature)-1]:.2f},{self.pH[len(self.pH)-1]:.2f},{self.turbidity[len(self.turbidity)-1]:.2f},{self.dissolvedOxygen[len(self.dissolvedOxygen)-1]:.2f}\n')
+                f'{datetime.now()},{self.temperature[len(self.temperature)-1]:.2f},{self.pH[len(self.pH)-1]:.2f},{self.turbidity[len(self.turbidity)-1]:.2f},{self.dissolvedOxygen[len(self.dissolvedOxygen)-1]:.2f}\n')
             logFile.close()
 
     def createFigure(self):
