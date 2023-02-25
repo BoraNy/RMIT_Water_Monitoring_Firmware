@@ -2,10 +2,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 /*---------------- Define Paramater-------------------*/
-uint32_t delayMS = 0;
 float Temperature,Turbidity,pH,Oxigen=0;
-unsigned long previousMillis = 0;
-const long interval = 5000;/*---- 5 seconds ----------*/
 String messageStr = "";
 /*---------------- MQTT Credentials ------------------*/
 const char* ssid = "Linksys01430";/*---------- Wifi SSID ------------*/
