@@ -1,27 +1,6 @@
-#include <Arduino.h>
-#include <WiFi.h>
-#include <PubSubClient.h>
-#include <ArduinoJson.h>
-/*---------------- Define Paramater-------------------*/
-uint32_t delayMS = 0;
-float Temperature, Turbidity, pH, Oxigen = 0;
-unsigned long previousMillis = 0;
-const long interval = 5000; /*---- 5 seconds ----------*/
-String messageStr = "";
-/*------------- MQTT Credentials ---------------*/
-const char *ssid = "Linksys01430";              /*---------- Wifi SSID -----------------*/
-const char *password = "ecw11wce";              /*---------- Wifi Password -------------*/
-const char *mqttServer = "broker.hivemq.com";   /*---------- MQTT Broker ---------------*/
-const char *mqttUserName = "NPIC_MQTT";         /*---------- MQTT Username--------------*/
-const char *mqttPassword = "NPIC_RMIT_Project"; /*---------- MQTT Password--------------*/
-const char *clientID = "NPIC_ID_1";             /*---------- Client ID------------------*/
-const char *topic = "Message";                  /*---------- Topic of Data -------------*/
+#include "variable.h"
 
-/*---------------- MQTT Credentials ------------------*/
-WiFiClient NPIC_Client;
-PubSubClient Client(NPIC_Client);
-/*----------------------------------------------------*/
-void Setup_Wifi()
+void WiFi_Setup()
 { /*-------- Set up Wifi -----------*/
   delay(5);
   WiFi.begin(ssid, password);
@@ -76,15 +55,13 @@ void callback(char *topic, byte *payload, unsigned int length)
   Serial.println(data);
 }
 
-void setup()
+void MQTT_Init(void)
 {
-  Serial.begin(115200);
-  Setup_Wifi();
   Client.setServer(mqttServer, 1883);
   Client.setCallback(callback);
 }
 
-void loop()
+void Data2MQTT(void)
 {
   if (!Client.connected())
   {
