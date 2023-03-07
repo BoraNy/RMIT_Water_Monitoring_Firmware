@@ -118,3 +118,4 @@ if __name__ == '__main__':
                        d, d+uniform(-1.0, 1.0),
                        )
         live.logDataToFile()
+        print(a,b,c,d)
