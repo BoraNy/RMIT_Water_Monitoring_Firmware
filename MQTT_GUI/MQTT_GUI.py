@@ -19,6 +19,7 @@ tille_monitor.place(x=830, y=75)
 
 # --> Time
 
+
 def time():
     string = strftime('%A %x\n%H:%M:%S %p')
     label.config(text="" + string.upper())
@@ -147,6 +148,8 @@ client_ID = f'python-mqtt-{random.randint(0, 100)}'
 username = "NPIC_MQTT"
 password = "NPIC_RMIT_Project"
 #----------------------- Check Connection --------------------#
+
+
 def MQTT_Connection() -> mqtt_client:
     def on_connection(client, userdata, flags, rc):
         if rc == 0:
@@ -154,11 +157,13 @@ def MQTT_Connection() -> mqtt_client:
         else:
             print("Fialed to Connect to MQTT Broker")
     client = mqtt_client.Client(client_ID)
-    client.username_pw_set(username,password)
+    client.username_pw_set(username, password)
     client.on_connect = on_connection
-    client.connect(broker,port)
+    client.connect(broker, port)
     return client
 #----------------------- Check Subscribe --------------------#
+
+
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, message):
         global Turbidity, pH, dissolvedOxygen, Temperature
@@ -169,7 +174,8 @@ def subscribe(client: mqtt_client):
         Turbidity = str(data["notification"]["parameters"]["Turbidity"])
         pH = str(data["notification"]["parameters"]["pH"])
         dissolvedOxygen = str(data["notification"]["parameters"]["Oxigen"])
-        print("Temperature:" + Temperature + "\tTurbidity:" + Turbidity + "\tpH:" + pH + "\t\tOxigen:" + dissolvedOxygen)
+        print("Temperature:" + Temperature + "\tTurbidity:" +
+              Turbidity + "\tpH:" + pH + "\t\tOxigen:" + dissolvedOxygen)
         try:
             # --- Change Color Info Here
             if (pH >= 0) and (pH < 4):

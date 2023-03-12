@@ -7,9 +7,10 @@
 #include <EEPROM.h>
 
 /* --- Sensor Pins --- */
-#define TURBIDITY_SENSOR_PIN 0
-#define PH_SENSOR_PIN 1
-#define OXYGEN_SENSOR_PIN 2
+#define TDS_SENSOR_PIN        3
+#define TURBIDITY_SENSOR_PIN  0
+#define PH_SENSOR_PIN         1
+#define OXYGEN_SENSOR_PIN     2
 
 /* --- Temperature Sensor Parameters --- */
 #define DS18B20_PIN 13
