@@ -28,7 +28,7 @@ void loop()
   sensor.tempC = readTemperatureSensor();
   sensor.PH = readPHSensor(PH_SENSOR_PIN, sensor.tempC);
   sensor.TDS = readTDSSensor(TDS_SENSOR_PIN, sensor.tempC);
-  sensor.dissOxygen = readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC);
+  sensor.dissOxygen = readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC)*1e-3;   // mg/L
 
   /* --- Apply Filter Algorithm --- */
   LowPassFilter(sensor.tempC, &tempCFilter.newReading, &tempCFilter.oldReading,
@@ -58,9 +58,9 @@ void loop()
 void sendDataToMain(void)
 {
   sprintf(sensor.data, "%d.%d,%d.%d,%d.%d,%d.%d\r\n",
-          TDS.wholeNumber, TDS.fractional,
-          PH.wholeNumber, PH.fractional,
-          dissOxygen.wholeNumber, dissOxygen.fractional,
-          tempC.wholeNumber, tempC.fractional);
+          TDS.wholeNumber, TDS.fractional,                    // -
+          PH.wholeNumber, PH.fractional,                      // -
+          dissOxygen.wholeNumber, dissOxygen.fractional,      // mg/L
+          tempC.wholeNumber, tempC.fractional);               // *C
   Serial.print(sensor.data);
 }
