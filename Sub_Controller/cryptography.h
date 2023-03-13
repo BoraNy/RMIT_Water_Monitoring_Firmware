@@ -6,8 +6,8 @@
 void aes128_enc_single(const uint8_t* key, void* data);
 void aes128_dec_single(const uint8_t* key, void* data);
 
-#define TWO_DIGIT_PRECISION     2
-#define FOUR_DIGIT_PRECISION    4
+#define TWO_DIGIT_PRECISION 2
+#define FOUR_DIGIT_PRECISION 4
 
 char dataBuffer[16];
 uint8_t key[] = {
@@ -15,12 +15,10 @@ uint8_t key[] = {
   92, 23, 52, 62, 12, 74, 47, 25
 };
 
-struct float2int_S
-{
+struct float2int_S {
   int wholeNumber, fractional;
 
-  void float2int(float value, int precision)
-  {
+  void float2int(float value, int precision) {
     wholeNumber = int(value);
     fractional = (value - int(value)) * pow(10, precision);
   }

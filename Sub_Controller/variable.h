@@ -1,8 +1,7 @@
 #ifndef __VARIABLE_H
 #define __VARIABLE_H
 
-struct sensor_s
-{
+struct sensor_s {
   int turbidity = 0;
   float TDS = 0;
   float tempC = 0,
@@ -11,10 +10,9 @@ struct sensor_s
   char data[50];
 } sensor;
 
-struct filter_s
-{
-    float oldReading = 0;
-    float newReading = 0;
+struct filter_s {
+  float oldReading = 0;
+  float newReading = 0;
 };
 
 const float BETA = 0.9;

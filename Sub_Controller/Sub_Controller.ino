@@ -5,13 +5,11 @@
 
 filter_s tempCFilter, PHFilter, TDSFilter, dissOxygenFilter;
 
-void setup()
-{
+void setup() {
   Serial.begin(115200);
 
   /* --- Read Initialize Data for Filter Calibration --- */
-  for (int i = 0; i < 3; i++)
-  {
+  for (int i = 0; i < 3; i++) {
     tempCFilter.oldReading = readTemperatureSensor();
     PHFilter.oldReading = readPHSensor(PH_SENSOR_PIN, sensor.tempC);
     TDSFilter.oldReading = readTDSSensor(TDS_SENSOR_PIN, sensor.tempC);
@@ -21,14 +19,13 @@ void setup()
   sensorInitialization();
 }
 
-void loop()
-{
+void loop() {
   /* --- Read Value from Sensors --- */
   // sensor.turbidity = readTurbiditySensor(TURBIDITY_SENSOR_PIN);
   sensor.tempC = readTemperatureSensor();
   sensor.PH = readPHSensor(PH_SENSOR_PIN, sensor.tempC);
   sensor.TDS = readTDSSensor(TDS_SENSOR_PIN, sensor.tempC);
-  sensor.dissOxygen = readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC)*1e-3;   // mg/L
+  sensor.dissOxygen = readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC) * 1e-3;  // mg/L
 
   /* --- Apply Filter Algorithm --- */
   LowPassFilter(sensor.tempC, &tempCFilter.newReading, &tempCFilter.oldReading,
@@ -48,20 +45,18 @@ void loop()
 
   // serialDebug();
 
-  if (millis() - tick >= 1000)
-  {
+  if (millis() - tick >= 1000) {
     tick = millis();
     sendDataToMain();
   }
 }
 
-void sendDataToMain(void)
-{
+void sendDataToMain(void) {
   sprintf(sensor.data, "%d.%d,%d.%d,%d.%d,%d.%d\r\n",
-          TDS.wholeNumber, TDS.fractional,                    // -
-          PH.wholeNumber, PH.fractional,                      // -
-          dissOxygen.wholeNumber, dissOxygen.fractional,      // mg/L
-          tempC.wholeNumber, tempC.fractional);               // *C
+          TDS.wholeNumber, TDS.fractional,                // -
+          PH.wholeNumber, PH.fractional,                  // -
+          dissOxygen.wholeNumber, dissOxygen.fractional,  // mg/L
+          tempC.wholeNumber, tempC.fractional);           // *C
   Serial.write(sensor.data);
   memset(sensor.data, '\0', sizeof(sensor.data));
 }
