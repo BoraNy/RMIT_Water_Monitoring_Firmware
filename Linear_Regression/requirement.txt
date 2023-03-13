@@ -1,0 +1,8 @@
+serial
+numpy
+matplotlib
+jupyter
+seaborn
+pandas
+scikit-learn
+drawnow
