@@ -10,14 +10,14 @@ class LiveDataMonitoring:
         self.counter = 0
         self.temperature, self.predictedTempearture = [], []
         self.pH, self.predictedpH = [], []
-        self.turbidity, self.predictedTurbidity = [], []
+        self.TDS, self.predictedTDS = [], []
         self.dissolvedOxygen, self.predictedDissolvedOxygen = [], []
 
         # For Detect Missing Log File
         files = os.listdir('./')
         if 'monitoring_data_logging.csv' not in files:
             logFile = open('monitoring_data_logging.csv', 'w')
-            logFile.write('Time,Temperature,pH,Turbidity,DissolvedOxygen\n')
+            logFile.write('Time,Temperature,pH,TDS,DissolvedOxygen\n')
             logFile.close()
 
         # For Live Matplotlib
@@ -26,7 +26,7 @@ class LiveDataMonitoring:
     def logDataToFile(self):
         with open('./monitoring_data_logging.csv', 'a+') as logFile:
             logFile.write(
-                f'{datetime.now()},{self.temperature[len(self.temperature)-1]:.2f},{self.pH[len(self.pH)-1]:.2f},{self.turbidity[len(self.turbidity)-1]:.2f},{self.dissolvedOxygen[len(self.dissolvedOxygen)-1]:.2f}\n')
+                f'{datetime.now()},{self.temperature[len(self.temperature)-1]:.2f},{self.pH[len(self.pH)-1]:.2f},{self.TDS[len(self.TDS)-1]:.2f},{self.dissolvedOxygen[len(self.dissolvedOxygen)-1]:.2f}\n')
             logFile.close()
 
     def createFigure(self):
@@ -52,13 +52,13 @@ class LiveDataMonitoring:
         plt3.legend(loc='lower left')
 
         plt.subplot(223)
-        plt.plot(self.turbidity,
-                 label=f'Turbidity = {self.turbidity[len(self.turbidity)-1]:.2f}NTU')
+        plt.plot(self.TDS,
+                 label=f'TDS = {self.TDS[len(self.TDS)-1]:.2f}ppm')
         plt.ylim(0, 3000)
         plt.legend(loc='upper left')
         plt4 = plt.twinx()
-        plt4.plot(self.predictedTurbidity, 'r--',
-                  label=f'Predicted = {self.predictedTurbidity[len(self.predictedTurbidity)-1]:.2f}NTU')
+        plt4.plot(self.predictedTDS, 'r--',
+                  label=f'Predicted = {self.predictedTDS[len(self.predictedTDS)-1]:.2f}ppm')
         plt.ylim(0, 3000)
         plt4.legend(loc='lower left')
 
@@ -73,17 +73,17 @@ class LiveDataMonitoring:
         plt.ylim(0, 30)
         plt4.legend(loc='lower left')
 
-    def visualize(self, temperature, predictedTemperature, pH, predictedpH, turbidity, predictedTurbidity, dissolvedOxygen, predictedDissolveOxygen):
+    def visualize(self, temperature, predictedTemperature, pH, predictedpH, TDS, predictedTDS, dissolvedOxygen, predictedDissolveOxygen):
         # Get Raw Data Update
         self.temperature.append(temperature)
         self.pH.append(pH)
-        self.turbidity.append(turbidity)
+        self.TDS.append(TDS)
         self.dissolvedOxygen.append(dissolvedOxygen)
 
         # Get Predicted Data Update
         self.predictedTempearture.append(predictedTemperature)
         self.predictedpH.append(predictedpH)
-        self.predictedTurbidity.append(predictedTurbidity)
+        self.predictedTDS.append(predictedTDS)
         self.predictedDissolvedOxygen.append(predictedDissolveOxygen)
 
         drawnow(self.createFigure)
@@ -96,8 +96,8 @@ class LiveDataMonitoring:
             self.pH.pop(0)
             self.predictedpH.pop(0)
 
-            self.turbidity.pop(0)
-            self.predictedTurbidity.pop(0)
+            self.TDS.pop(0)
+            self.predictedTDS.pop(0)
 
             self.dissolvedOxygen.pop(0)
             self.predictedDissolvedOxygen.pop(0)
@@ -118,4 +118,4 @@ if __name__ == '__main__':
                        d, d+uniform(-1.0, 1.0),
                        )
         live.logDataToFile()
-        print(a, b, c, d)
+        # print(a, b, c, d)
