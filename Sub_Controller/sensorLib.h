@@ -112,7 +112,7 @@ float readOxygenSensor(int analogPin, int temperature)
   return readDO(ADC_Voltage, Temperaturet);
 }
 
-const int TDS_SAMPLING_DATA = 10;
+const int TDS_SAMPLING_DATA = 30;
 int analogBuffer[TDS_SAMPLING_DATA];
 int analogBufferTemp[TDS_SAMPLING_DATA];
 int analogBufferIndex = 0, copyIndex = 0;

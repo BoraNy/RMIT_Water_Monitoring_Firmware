@@ -10,7 +10,7 @@ void setup()
   Serial.begin(115200);
 
   /* --- Read Initialize Data for Filter Calibration --- */
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 3; i++)
   {
     tempCFilter.oldReading = readTemperatureSensor();
     PHFilter.oldReading = readPHSensor(PH_SENSOR_PIN, sensor.tempC);
@@ -62,5 +62,6 @@ void sendDataToMain(void)
           PH.wholeNumber, PH.fractional,                      // -
           dissOxygen.wholeNumber, dissOxygen.fractional,      // mg/L
           tempC.wholeNumber, tempC.fractional);               // *C
-  Serial.print(sensor.data);
+  Serial.write(sensor.data);
+  memset(sensor.data, '\0', sizeof(sensor.data));
 }
