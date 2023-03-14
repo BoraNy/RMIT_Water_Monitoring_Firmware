@@ -18,6 +18,7 @@ class SerialCommunication:
         data = data.replace('\\r\\n', '')
         data = data.replace('b', '')
         data = data.replace('\'', '')
+        data = data.replace('\\r', '')
         return data.split(',')
 
 if __name__ == '__main__':

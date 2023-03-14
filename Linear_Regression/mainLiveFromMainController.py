@@ -106,13 +106,13 @@ class LiveDataMonitoring:
 
 if __name__ == '__main__':
     live = LiveDataMonitoring()
-    controllerPort = SerialCommunication()
+    controllerPort = SerialCommunication(115200)
     while True:
         data = controllerPort.read()
-        TDS = data[0]
-        pH = data[1]
-        dissolvedOxygen = data[2]
-        temperatureC = data[3]
+        TDS = float(data[0])
+        pH = float(data[1])
+        dissolvedOxygen = float(data[2])
+        temperatureC = float(data[3])
 
         live.visualize(
             temperatureC, temperatureC+uniform(-1.0, 1.0),
