@@ -5,10 +5,17 @@ void serialDebug() {
   Serial.print("PH: ");
   Serial.print(sensor.PH);
   Serial.print('\t');
-  Serial.print("Turbidity: ");
-  Serial.print(sensor.turbidity);
+  Serial.print("TDS: ");
+  Serial.print(sensor.TDS);
   Serial.print('\t');
   Serial.print("Dissolve Oxygen: ");
   Serial.print(sensor.dissOxygen);
   Serial.println();
+}
+
+void debugPHandDissolvedOxygen(void)
+{
+  Serial.print(sensor.PH);
+  Serial.print(',');
+  Serial.println(sensor.dissOxygen);
 }

@@ -9,7 +9,7 @@ void setup() {
   Serial.begin(115200);
 
   /* --- Read Initialize Data for Filter Calibration --- */
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 10; i++) {
     tempCFilter.oldReading = readTemperatureSensor();
     PHFilter.oldReading = readPHSensor(PH_SENSOR_PIN, sensor.tempC);
     TDSFilter.oldReading = readTDSSensor(TDS_SENSOR_PIN, sensor.tempC);
@@ -27,6 +27,12 @@ void loop() {
   sensor.TDS = readTDSSensor(TDS_SENSOR_PIN, sensor.tempC);
   sensor.dissOxygen = readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC) * 1e-3;  // mg/L
 
+  /* --- Remove Error Reading --- */
+  if(sensor.PH < 0) sensor.PH = abs(sensor.PH);
+
+  sensor.PH = sensor.PH * PH_SENSOR_CALIBRATION;
+  sensor.dissOxygen = sensor.dissOxygen * DISSOLVED_OXYGEN_CALIBRATION;
+
   /* --- Apply Filter Algorithm --- */
   LowPassFilter(sensor.tempC, &tempCFilter.newReading, &tempCFilter.oldReading,
                 &sensor.tempC, BETA);
@@ -43,7 +49,8 @@ void loop() {
   dissOxygen.float2int(sensor.dissOxygen, TWO_DIGIT_PRECISION);
   TDS.float2int(sensor.TDS, TWO_DIGIT_PRECISION);
 
-  // serialDebug();
+  //serialDebug();
+  //debugPHandDissolvedOxygen();
 
   if (millis() - tick >= 1000) {
     tick = millis();

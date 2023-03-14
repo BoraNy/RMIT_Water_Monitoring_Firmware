@@ -10,6 +10,8 @@ class SerialCommunication:
                 self.hardwarePort = port.device
             if 'CH340' in port.description:
                 self.hardwarePort = port.device
+            if 'USB' in port.description:
+                self.hardwarePort = port.device
                 
         self.hardwareSerial = serial.Serial(self.hardwarePort, baudrate, timeout=1000)
     
