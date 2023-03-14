@@ -23,8 +23,8 @@ class LiveDataMonitoring:
         # For Live Matplotlib
         plt.ion()
 
-    def logDataToFile(self):
-        with open('./monitoring_data_logging.csv', 'a+') as logFile:
+    def logDataToFile(self, fileName):
+        with open(f'./{fileName}.csv', 'a+') as logFile:
             logFile.write(
                 f'{datetime.now()},{self.temperature[len(self.temperature)-1]:.2f},{self.pH[len(self.pH)-1]:.2f},{self.TDS[len(self.TDS)-1]:.2f},{self.dissolvedOxygen[len(self.dissolvedOxygen)-1]:.2f}\n')
             logFile.close()
@@ -117,5 +117,5 @@ if __name__ == '__main__':
                        c, c+uniform(-1.0, 1.0),
                        d, d+uniform(-1.0, 1.0),
                        )
-        live.logDataToFile()
+        live.logDataToFile('SaveToFileTest')
         # print(a, b, c, d)
