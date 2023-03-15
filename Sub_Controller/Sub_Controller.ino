@@ -9,11 +9,11 @@ void setup() {
   Serial.begin(115200);
 
   /* --- Read Initialize Data for Filter Calibration --- */
-  for (int i = 0; i < 10; i++) {
-    tempCFilter.oldReading = readTemperatureSensor();
-    PHFilter.oldReading = readPHSensor(PH_SENSOR_PIN, sensor.tempC);
-    TDSFilter.oldReading = readTDSSensor(TDS_SENSOR_PIN, sensor.tempC);
-    dissOxygenFilter.oldReading = readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC);
+  for (int i = 0; i < 20; i++) {
+    readTemperatureSensor(&tempCFilter.oldReading);
+    readPHSensor(PH_SENSOR_PIN, sensor.tempC, &PHFilter.oldReading);
+    readTDSSensor(TDS_SENSOR_PIN, sensor.tempC, &TDSFilter.oldReading);
+    readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC, &dissOxygenFilter.oldReading);
   }
 
   sensorInitialization();
@@ -22,14 +22,13 @@ void setup() {
 void loop() {
   /* --- Read Value from Sensors --- */
   // sensor.turbidity = readTurbiditySensor(TURBIDITY_SENSOR_PIN);
-  sensor.tempC = readTemperatureSensor();
-  sensor.PH = readPHSensor(PH_SENSOR_PIN, sensor.tempC);
-  sensor.TDS = readTDSSensor(TDS_SENSOR_PIN, sensor.tempC);
-  sensor.dissOxygen = readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC) * 1e-3;  // mg/L
+  readTemperatureSensor(&sensor.tempC);
+  readPHSensor(PH_SENSOR_PIN, sensor.tempC, &sensor.PH);
+  readTDSSensor(TDS_SENSOR_PIN, sensor.tempC, &sensor.TDS);
+  readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC, &sensor.dissOxygen);
 
-  /* --- Apply Filter Algorithm --- */
-  LowPassFilter(sensor.tempC, &tempCFilter.newReading, &tempCFilter.oldReading,
-                &sensor.tempC, BETA);
+                      /* --- Apply Filter Algorithm --- */
+                      LowPassFilter(sensor.tempC, &tempCFilter.newReading, &tempCFilter.oldReading, &sensor.tempC, BETA);
   LowPassFilter(sensor.dissOxygen, &dissOxygenFilter.newReading, &dissOxygenFilter.oldReading,
                 &sensor.dissOxygen, BETA);
   LowPassFilter(sensor.PH, &PHFilter.newReading, &PHFilter.oldReading,
@@ -38,10 +37,10 @@ void loop() {
                 &sensor.TDS, BETA);
 
   /* --- Convert Floating Point to Integer --- */
-  PH.float2int(sensor.PH, TWO_DIGIT_PRECISION);
-  tempC.float2int(sensor.tempC, TWO_DIGIT_PRECISION);
-  dissOxygen.float2int(sensor.dissOxygen, TWO_DIGIT_PRECISION);
-  TDS.float2int(sensor.TDS, TWO_DIGIT_PRECISION);
+  // PH.float2int(sensor.PH, TWO_DIGIT_PRECISION);
+  // tempC.float2int(sensor.tempC, TWO_DIGIT_PRECISION);
+  // dissOxygen.float2int(sensor.dissOxygen, TWO_DIGIT_PRECISION);
+  // TDS.float2int(sensor.TDS, TWO_DIGIT_PRECISION);
 
   //serialDebug();
   //debugPHandDissolvedOxygen();

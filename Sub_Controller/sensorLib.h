@@ -59,7 +59,7 @@ void sensorInitialization() {
   ph.begin();
 }
 
-float readPHSensor(int analogPin, int temperature) {
+float readPHSensor(int analogPin, int temperature, float *returnValue) {
   // float ph = analogRead(analogPin);
   // return ph * 0.017;
   static unsigned long timepoint = millis();
@@ -68,7 +68,7 @@ float readPHSensor(int analogPin, int temperature) {
     Temperaturet = (uint8_t)temperature;
     Voltage = analogRead(analogPin) / 1024.0 * 5000;
     PHValue = ph.readPH(Voltage, Temperaturet);
-    return PHValue;
+    *returnValue = PHValue;
   }
   ph.calibration(Voltage, Temperaturet);
 }
@@ -83,9 +83,9 @@ float readTurbiditySensor(int analogPin) {
   return (-1120.4 * sq(v) + 5742.3 * v - 4352.9);
 }
 
-float readTemperatureSensor() {
+float readTemperatureSensor(float *returnValue) {
   DS18B20.requestTemperatures();
-  return DS18B20.getTempCByIndex(0);
+  *returnValue = DS18B20.getTempCByIndex(0);
 }
 
 /* --- Oxygen Sensor Functions --- */
@@ -99,11 +99,11 @@ int16_t readDO(uint32_t voltage_mv, uint8_t temperature_c) {
 #endif
 }
 
-float readOxygenSensor(int analogPin, int temperature) {
+float readOxygenSensor(int analogPin, int temperature, float *returnValue) {
   Temperaturet = (uint8_t)temperature;
   ADC_Raw = analogRead(analogPin);
   ADC_Voltage = (uint32_t(VREF) * ADC_Raw / ADC_RES);
-  return readDO(ADC_Voltage, Temperaturet);
+  *returnValue = readDO(ADC_Voltage, Temperaturet) * 1e-3;  //mg/L
 }
 
 static const int TDS_SAMPLING_DATA = 30;
@@ -117,6 +117,7 @@ int getMedianNum(int bArray[], int iFilterLen) {
   int bTab[iFilterLen];
   for (byte i = 0; i < iFilterLen; i++)
     bTab[i] = bArray[i];
+
   int i, j, bTemp;
   for (j = 0; j < iFilterLen - 1; j++) {
     for (i = 0; i < iFilterLen - j - 1; i++) {
@@ -127,6 +128,7 @@ int getMedianNum(int bArray[], int iFilterLen) {
       }
     }
   }
+
   if ((iFilterLen & 1) > 0)
     bTemp = bTab[(iFilterLen - 1) / 2];
   else
@@ -134,7 +136,7 @@ int getMedianNum(int bArray[], int iFilterLen) {
   return bTemp;
 }
 
-float readTDSSensor(int analogPin, float temperature) {
+float readTDSSensor(int analogPin, float temperature, float *returnValue) {
   static float TDS_Reading;
 
   static unsigned long analogSampleTimepoint = millis();
@@ -156,9 +158,8 @@ float readTDSSensor(int analogPin, float temperature) {
     float compensationCoefficient = 1.0 + 0.02 * (temperature - 25.0);
     float compensationVoltage = averageVoltage / compensationCoefficient;
     TDS_Reading = (133.42 * compensationVoltage * compensationVoltage - 255.86 * compensationVoltage * compensationVoltage + 857.39 * compensationVoltage) * 0.5;
+    *returnValue = TDS_Reading;
   }
-
-  return TDS_Reading;
 }
 
 #endif

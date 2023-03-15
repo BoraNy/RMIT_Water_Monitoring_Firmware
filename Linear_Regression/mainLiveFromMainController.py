@@ -55,12 +55,12 @@ class LiveDataMonitoring:
         plt.subplot(223)
         plt.plot(self.TDS,
                  label=f'TDS = {self.TDS[len(self.TDS)-1]:.2f}ppm')
-        plt.ylim(0, 3000)
+        plt.ylim(0, 1000)
         plt.legend(loc='upper left')
         plt4 = plt.twinx()
         plt4.plot(self.predictedTDS, 'r--',
                   label=f'Predicted = {self.predictedTDS[len(self.predictedTDS)-1]:.2f}ppm')
-        plt.ylim(0, 3000)
+        plt.ylim(0, 1000)
         plt4.legend(loc='lower left')
 
         plt.subplot(224)
@@ -124,5 +124,5 @@ if __name__ == '__main__':
             TDS, TDS+uniform(-1.0, 1.0),
             dissolvedOxygen, dissolvedOxygen+uniform(-1.0, 1.0),
         )
-        live.logDataToFile('FinalTestLocationFreshWaterPump')
+        live.logDataToFile('NPICPondData')
         print(TDS, pH, dissolvedOxygen, temperatureC)
