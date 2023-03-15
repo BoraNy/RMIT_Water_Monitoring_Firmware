@@ -112,8 +112,8 @@ if __name__ == '__main__':
         
         try:
             TDS = float(data[0])
-            pH = float(data[1])/11.53763019
-            dissolvedOxygen = float(data[2])/3.578413759
+            pH = float(data[1])
+            dissolvedOxygen = float(data[2])
             temperatureC = float(data[3])
         except:
             pass

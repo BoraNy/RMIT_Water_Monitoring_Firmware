@@ -106,11 +106,11 @@ float readOxygenSensor(int analogPin, int temperature) {
   return readDO(ADC_Voltage, Temperaturet);
 }
 
-const int TDS_SAMPLING_DATA = 30;
-int analogBuffer[TDS_SAMPLING_DATA];
-int analogBufferTemp[TDS_SAMPLING_DATA];
-int analogBufferIndex = 0, copyIndex = 0;
-float averageVoltage = 0, tdsValue = 0;
+static const int TDS_SAMPLING_DATA = 30;
+static int analogBuffer[TDS_SAMPLING_DATA];
+static int analogBufferTemp[TDS_SAMPLING_DATA];
+static int analogBufferIndex = 0, copyIndex = 0;
+static float averageVoltage = 0, tdsValue = 0;
 
 /* --- TDS Sensor --- */
 int getMedianNum(int bArray[], int iFilterLen) {

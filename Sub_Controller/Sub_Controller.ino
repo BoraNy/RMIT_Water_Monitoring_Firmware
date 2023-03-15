@@ -27,12 +27,6 @@ void loop() {
   sensor.TDS = readTDSSensor(TDS_SENSOR_PIN, sensor.tempC);
   sensor.dissOxygen = readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC) * 1e-3;  // mg/L
 
-  /* --- Remove Error Reading --- */
-  if(sensor.PH < 0) sensor.PH = abs(sensor.PH);
-
-  sensor.PH = sensor.PH * PH_SENSOR_CALIBRATION;
-  sensor.dissOxygen = sensor.dissOxygen * DISSOLVED_OXYGEN_CALIBRATION;
-
   /* --- Apply Filter Algorithm --- */
   LowPassFilter(sensor.tempC, &tempCFilter.newReading, &tempCFilter.oldReading,
                 &sensor.tempC, BETA);
@@ -52,13 +46,22 @@ void loop() {
   //serialDebug();
   //debugPHandDissolvedOxygen();
 
-  if (millis() - tick >= 1000) {
-    tick = millis();
-    sendDataToMain();
-  }
+  sendDataToMainSerial();
+  // sendDataToMainSprinf();
 }
 
-void sendDataToMain(void) {
+void sendDataToMainSerial(void) {
+  Serial.print(sensor.TDS);
+  Serial.print(',');
+  Serial.print(sensor.PH);
+  Serial.print(',');
+  Serial.print(sensor.dissOxygen);
+  Serial.print(',');
+  Serial.print(sensor.tempC);
+  Serial.println();
+}
+
+void sendDataToMainSprinf(void) {
   sprintf(sensor.data, "%d.%d,%d.%d,%d.%d,%d.%d\r\n",
           TDS.wholeNumber, TDS.fractional,                // -
           PH.wholeNumber, PH.fractional,                  // -
