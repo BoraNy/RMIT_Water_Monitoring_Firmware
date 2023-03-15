@@ -109,13 +109,11 @@ if __name__ == '__main__':
     controllerPort = SerialCommunication(115200)
     while True:
         data = controllerPort.read()
-
-        print(data)
         
         try:
             TDS = float(data[0])
-            pH = float(data[1])
-            dissolvedOxygen = float(data[2])
+            pH = float(data[1])/11.53763019
+            dissolvedOxygen = float(data[2])/3.578413759
             temperatureC = float(data[3])
         except:
             pass
@@ -126,5 +124,5 @@ if __name__ == '__main__':
             TDS, TDS+uniform(-1.0, 1.0),
             dissolvedOxygen, dissolvedOxygen+uniform(-1.0, 1.0),
         )
-        live.logDataToFile('NewTestLocation1')
+        live.logDataToFile('FinalTestLocationFreshWaterPump')
         print(TDS, pH, dissolvedOxygen, temperatureC)
