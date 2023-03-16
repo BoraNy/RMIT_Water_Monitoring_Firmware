@@ -124,5 +124,5 @@ if __name__ == '__main__':
             TDS, TDS+uniform(-1.0, 1.0),
             dissolvedOxygen, dissolvedOxygen+uniform(-1.0, 1.0),
         )
-        live.logDataToFile('NPICPondData')
+        live.logDataToFile('Test1_Choram_Island')
         print(TDS, pH, dissolvedOxygen, temperatureC)
