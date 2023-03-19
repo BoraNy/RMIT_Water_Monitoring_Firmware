@@ -68,11 +68,15 @@ void sensorInitialization() {
   pinMode(ENABLE_PH_SENSOR_PIN, OUTPUT);
   pinMode(ENABLE_DISSOLVED_OXYGEN_SENSOR_PIN, OUTPUT);
   pinMode(ENABLE_TEMPERATURE_SENSOR_PIN, OUTPUT);
+
+  /* --- Initialize by Disable All the Sensors --- */
+  digitalWrite(ENABLE_TDS_SENSOR_PIN, LOW);
+  digitalWrite(ENABLE_PH_SENSOR_PIN, LOW);
+  digitalWrite(ENABLE_DISSOLVED_OXYGEN_SENSOR_PIN, LOW);
+  digitalWrite(ENABLE_TEMPERATURE_SENSOR_PIN, LOW);
 }
 
 void readPHSensor(int analogPin, int temperature, float *returnValue) {
-  // float ph = analogRead(analogPin);
-  // return ph * 0.017;
   static unsigned long timepoint = millis();
   if (millis() - timepoint > 1000U) {
     timepoint = millis();
@@ -84,14 +88,14 @@ void readPHSensor(int analogPin, int temperature, float *returnValue) {
   ph.calibration(Voltage, Temperaturet);
 }
 
-float readTurbiditySensor(int analogPin) {
+void readTurbiditySensor(int analogPin, float *returnValue) {
   float v = analogRead(analogPin) * 5.0 / 1024;
   if (v <= 2.5)
-    return 3000;
+    *returnValue = 3000;
   if (v >= 4.2002)
-    return 0;
+    *returnValue = 0;
 
-  return (-1120.4 * sq(v) + 5742.3 * v - 4352.9);
+  *returnValue = (-1120.4 * sq(v) + 5742.3 * v - 4352.9);
 }
 
 float readTemperatureSensor(float *returnValue) {
@@ -217,7 +221,7 @@ void sendDataToMainSerial(unsigned long sendInterval) {
   static unsigned long tick = 0;
   if (millis() - tick >= sendInterval) {
     tick = millis();
-    
+
     Serial.print(sensor.TDS);
     Serial.print(',');
     Serial.print(sensor.PH);
