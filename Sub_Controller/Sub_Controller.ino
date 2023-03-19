@@ -9,14 +9,13 @@ void setup() {
   Serial.begin(115200);
 
   /* --- Read Initialize Data for Filter Calibration --- */
+  sensorInitialization();
   for (int i = 0; i < 20; i++) {
     readTemperatureSensor(&tempCFilter.oldReading);
     readPHSensor(PH_SENSOR_PIN, sensor.tempC, &PHFilter.oldReading);
     readTDSSensor(TDS_SENSOR_PIN, sensor.tempC, &TDSFilter.oldReading);
     readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC, &dissOxygenFilter.oldReading);
   }
-
-  sensorInitialization();
 }
 
 void loop() {
@@ -27,8 +26,8 @@ void loop() {
   readTDSSensor(TDS_SENSOR_PIN, sensor.tempC, &sensor.TDS);
   readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC, &sensor.dissOxygen);
 
-                      /* --- Apply Filter Algorithm --- */
-                      LowPassFilter(sensor.tempC, &tempCFilter.newReading, &tempCFilter.oldReading, &sensor.tempC, BETA);
+  /* --- Apply Filter Algorithm --- */
+  LowPassFilter(sensor.tempC, &tempCFilter.newReading, &tempCFilter.oldReading, &sensor.tempC, BETA);
   LowPassFilter(sensor.dissOxygen, &dissOxygenFilter.newReading, &dissOxygenFilter.oldReading,
                 &sensor.dissOxygen, BETA);
   LowPassFilter(sensor.PH, &PHFilter.newReading, &PHFilter.oldReading,

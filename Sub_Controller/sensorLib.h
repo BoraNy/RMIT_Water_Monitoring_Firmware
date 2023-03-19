@@ -144,7 +144,7 @@ float readTDSSensor(int analogPin, float temperature, float *returnValue) {
     analogSampleTimepoint = millis();
     analogBuffer[analogBufferIndex] = analogRead(analogPin);
     analogBufferIndex++;
-    if (analogBuffer == TDS_SAMPLING_DATA)
+    if (analogBufferIndex == TDS_SAMPLING_DATA)
       analogBufferIndex = 0;
   }
 
