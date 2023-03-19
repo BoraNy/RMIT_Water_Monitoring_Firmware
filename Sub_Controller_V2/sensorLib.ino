@@ -7,16 +7,15 @@
 #include <EEPROM.h>
 
 /* --- Sensor Pins --- */
-#define TDS_SENSOR_PIN 3
-#define TURBIDITY_SENSOR_PIN 0
-#define PH_SENSOR_PIN 1
-#define OXYGEN_SENSOR_PIN 2
+#define TDS_SENSOR_PIN A2
+#define PH_SENSOR_PIN A1
+#define OXYGEN_SENSOR_PIN A0
 
 /* --- Sensor Enable Pins --- */
-#define ENABLE_TDS_SENSOR_PIN 3
-#define ENABLE_PH_SENSOR_PIN 2
-#define ENABLE_DISSOLVED_OXYGEN_SENSOR_PIN 4
-#define ENABLE_TEMPERATURE_SENSOR_PIN 5
+#define ENABLE_TDS_SENSOR_PIN A4
+#define ENABLE_PH_SENSOR_PIN A5
+#define ENABLE_DISSOLVED_OXYGEN_SENSOR_PIN 12
+#define ENABLE_TEMPERATURE_SENSOR_PIN 11
 
 /* --- Temperature Sensor Parameters --- */
 #define DS18B20_PIN 13
@@ -68,11 +67,15 @@ void sensorInitialization() {
   pinMode(ENABLE_PH_SENSOR_PIN, OUTPUT);
   pinMode(ENABLE_DISSOLVED_OXYGEN_SENSOR_PIN, OUTPUT);
   pinMode(ENABLE_TEMPERATURE_SENSOR_PIN, OUTPUT);
+
+  /* --- Initialize by Disable All the Sensors --- */
+  digitalWrite(ENABLE_TDS_SENSOR_PIN, DISABLE);
+  digitalWrite(ENABLE_PH_SENSOR_PIN, DISABLE);
+  digitalWrite(ENABLE_DISSOLVED_OXYGEN_SENSOR_PIN, DISABLE);
+  digitalWrite(ENABLE_TEMPERATURE_SENSOR_PIN, DISABLE);
 }
 
 void readPHSensor(int analogPin, int temperature, float *returnValue) {
-  // float ph = analogRead(analogPin);
-  // return ph * 0.017;
   static unsigned long timepoint = millis();
   if (millis() - timepoint > 1000U) {
     timepoint = millis();
@@ -84,17 +87,17 @@ void readPHSensor(int analogPin, int temperature, float *returnValue) {
   ph.calibration(Voltage, Temperaturet);
 }
 
-float readTurbiditySensor(int analogPin) {
+void readTurbiditySensor(int analogPin, float *returnValue) {
   float v = analogRead(analogPin) * 5.0 / 1024;
   if (v <= 2.5)
-    return 3000;
+    *returnValue = 3000;
   if (v >= 4.2002)
-    return 0;
+    *returnValue = 0;
 
-  return (-1120.4 * sq(v) + 5742.3 * v - 4352.9);
+  *returnValue = (-1120.4 * sq(v) + 5742.3 * v - 4352.9);
 }
 
-float readTemperatureSensor(float *returnValue) {
+void readTemperatureSensor(float *returnValue) {
   DS18B20.requestTemperatures();
   *returnValue = DS18B20.getTempCByIndex(0);
 }
@@ -110,7 +113,7 @@ int16_t readDO(uint32_t voltage_mv, uint8_t temperature_c) {
 #endif
 }
 
-float readOxygenSensor(int analogPin, int temperature, float *returnValue) {
+void readOxygenSensor(int analogPin, int temperature, float *returnValue) {
   Temperaturet = (uint8_t)temperature;
   ADC_Raw = analogRead(analogPin);
   ADC_Voltage = (uint32_t(VREF) * ADC_Raw / ADC_RES);
@@ -174,7 +177,7 @@ void readTDSSensor(int analogPin, float temperature, float *returnValue) {
 }
 
 static int sensorOrder = 0;
-void enableSensor(bool MOS1_STATE, bool MOS2_STATE, bool MOS3_STATE, bool MOS4_STATE) {
+void enableSensor(bool MOS4_STATE, bool MOS1_STATE, bool MOS2_STATE, bool MOS3_STATE) {
   digitalWrite(ENABLE_TEMPERATURE_SENSOR_PIN, MOS4_STATE);
   digitalWrite(ENABLE_PH_SENSOR_PIN, MOS1_STATE);
   digitalWrite(ENABLE_TDS_SENSOR_PIN, MOS2_STATE);
@@ -184,28 +187,28 @@ void enableSensor(bool MOS1_STATE, bool MOS2_STATE, bool MOS3_STATE, bool MOS4_S
 void sequenceSensorReading() {
   switch (sensorOrder) {
     case 0:
-      enableSensor(1, 0, 0, 0);
+      enableSensor(ENABLE, DISABLE, DISABLE, DISABLE);
       for (int i = 0; i < sensor.READING_SAMPLE; i++)
         readTemperatureSensor(&sensor.tempC);
       sensorOrder = 1;
       break;
 
     case 1:
-      enableSensor(0, 1, 0, 0);
+      enableSensor(DISABLE, ENABLE, DISABLE, DISABLE);
       for (int i = 0; i < sensor.READING_SAMPLE; i++)
         readPHSensor(PH_SENSOR_PIN, sensor.tempC, &sensor.PH);
       sensorOrder = 2;
       break;
 
     case 2:
-      enableSensor(0, 0, 1, 0);
+      enableSensor(DISABLE, DISABLE, ENABLE, DISABLE);
       for (int i = 0; i < sensor.READING_SAMPLE; i++)
         readTDSSensor(TDS_SENSOR_PIN, sensor.tempC, &sensor.TDS);
       sensorOrder = 3;
       break;
 
     case 3:
-      enableSensor(0, 0, 0, 1);
+      enableSensor(DISABLE, DISABLE, DISABLE, ENABLE);
       for (int i = 0; i < sensor.READING_SAMPLE; i++)
         readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC, &sensor.dissOxygen);
       sensorOrder = 0;
@@ -217,7 +220,7 @@ void sendDataToMainSerial(unsigned long sendInterval) {
   static unsigned long tick = 0;
   if (millis() - tick >= sendInterval) {
     tick = millis();
-    
+
     Serial.print(sensor.TDS);
     Serial.print(',');
     Serial.print(sensor.PH);
