@@ -9,13 +9,15 @@ void setup() {
 
   /* --- Read Initialize Data for Filter Calibration --- */
   sensorInitialization();
-  sequenceSensorReading();
+  // sequenceSensorReadingMethod();
 }
 
 void loop() {
   /* --- Read Value from Sensors --- */
   // sensor.turbidity = readTurbiditySensor(TURBIDITY_SENSOR_PIN);
-  sequenceSensorReading();
+  // sequenceSensorReadingMethod0();
+  // sequenceSensorReadingMethod1();
+  sequenceSensorReadingMethod2();
 
   /* --- Apply Filter Algorithm --- */
   LowPassFilter(sensor.tempC, &tempCFilter.newReading, &tempCFilter.oldReading, &sensor.tempC, BETA);
@@ -26,5 +28,5 @@ void loop() {
   LowPassFilter(sensor.TDS, &TDSFilter.newReading, &TDSFilter.oldReading,
                 &sensor.TDS, BETA);
 
-  sendDataToMainSerial(REALTIME);
+  sendDataToMainSerial(EVERY_ONE_SECOND);
 }

@@ -16,7 +16,7 @@ public:
   int sensorOrder;
   char data[100];
 
-  const int READING_SAMPLE = 5;
+  int READING_SAMPLE = 5;
 } sensor;
 
 struct filter_s {

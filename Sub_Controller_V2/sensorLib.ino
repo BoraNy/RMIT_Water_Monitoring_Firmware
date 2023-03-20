@@ -176,42 +176,77 @@ void readTDSSensor(int analogPin, float temperature, float *returnValue) {
   }
 }
 
-static int sensorOrder = 0;
-void enableSensor(bool MOS4_STATE, bool MOS1_STATE, bool MOS2_STATE, bool MOS3_STATE) {
+static void enableSensor(bool MOS4_STATE, bool MOS1_STATE, bool MOS2_STATE, bool MOS3_STATE) {
   digitalWrite(ENABLE_TEMPERATURE_SENSOR_PIN, MOS4_STATE);
   digitalWrite(ENABLE_PH_SENSOR_PIN, MOS1_STATE);
   digitalWrite(ENABLE_TDS_SENSOR_PIN, MOS2_STATE);
   digitalWrite(ENABLE_DISSOLVED_OXYGEN_SENSOR_PIN, MOS3_STATE);
 }
 
-void sequenceSensorReading() {
-  switch (sensorOrder) {
+static void sequenceSensorReadingMethod0()
+{
+  enableSensor(ENABLE, ENABLE, ENABLE, ENABLE);
+  readTemperatureSensor(&sensor.tempC);
+  readPHSensor(PH_SENSOR_PIN, sensor.tempC, &sensor.PH);
+  readTDSSensor(TDS_SENSOR_PIN, sensor.tempC, &sensor.TDS);
+  readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC, &sensor.dissOxygen);
+}
+
+const unsigned long wait = 500;
+static void sequenceSensorReadingMethod1() {
+  enableSensor(ENABLE, DISABLE, DISABLE, DISABLE);
+  delay(wait);
+  for (int i = 0; i < sensor.READING_SAMPLE; i++)
+    readTemperatureSensor(&sensor.tempC);
+
+  enableSensor(DISABLE, ENABLE, DISABLE, DISABLE);
+  delay(wait);
+  for (int i = 0; i < sensor.READING_SAMPLE; i++) {
+    readPHSensor(PH_SENSOR_PIN, sensor.tempC, &sensor.PH);
+  }
+
+  enableSensor(DISABLE, DISABLE, ENABLE, DISABLE);
+  delay(wait);
+  for (int i = 0; i < sensor.READING_SAMPLE; i++) {
+    readTDSSensor(TDS_SENSOR_PIN, sensor.tempC, &sensor.TDS);
+  }
+
+  enableSensor(DISABLE, DISABLE, DISABLE, DISABLE);
+  delay(wait);
+  for (int i = 0; i < sensor.READING_SAMPLE; i++) {
+    readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC, &sensor.dissOxygen);
+  }
+}
+
+static int sensorReadingIndex = 0;
+static unsigned long readingOrder = 0;
+static void sequenceSensorReadingMethod2() {
+  if (millis() - readingOrder >= 5000) {
+    readingOrder = millis();
+    sensorReadingIndex++;
+    if (sensorReadingIndex > 3)
+      sensorReadingIndex = 0;
+  }
+
+  switch (sensorReadingIndex) {
     case 0:
       enableSensor(ENABLE, DISABLE, DISABLE, DISABLE);
-      for (int i = 0; i < sensor.READING_SAMPLE; i++)
-        readTemperatureSensor(&sensor.tempC);
-      sensorOrder = 1;
+      readTemperatureSensor(&sensor.tempC);
       break;
 
     case 1:
       enableSensor(DISABLE, ENABLE, DISABLE, DISABLE);
-      for (int i = 0; i < sensor.READING_SAMPLE; i++)
-        readPHSensor(PH_SENSOR_PIN, sensor.tempC, &sensor.PH);
-      sensorOrder = 2;
+      readPHSensor(PH_SENSOR_PIN, sensor.tempC, &sensor.PH);
       break;
 
     case 2:
       enableSensor(DISABLE, DISABLE, ENABLE, DISABLE);
-      for (int i = 0; i < sensor.READING_SAMPLE; i++)
-        readTDSSensor(TDS_SENSOR_PIN, sensor.tempC, &sensor.TDS);
-      sensorOrder = 3;
+      readTDSSensor(TDS_SENSOR_PIN, sensor.tempC, &sensor.TDS);
       break;
 
     case 3:
       enableSensor(DISABLE, DISABLE, DISABLE, ENABLE);
-      for (int i = 0; i < sensor.READING_SAMPLE; i++)
-        readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC, &sensor.dissOxygen);
-      sensorOrder = 0;
+      readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC, &sensor.dissOxygen);
       break;
   }
 }
