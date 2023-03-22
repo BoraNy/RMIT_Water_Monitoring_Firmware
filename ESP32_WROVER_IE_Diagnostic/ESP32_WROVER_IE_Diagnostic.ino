@@ -1,21 +1,28 @@
-#define UART0_TX 1
-#define UART0_RX 3
-#define UART1_TX 10
-#define UART1_RX 9
-#define UART2_TX 17
-#define UART2_RX 16
-
 #define TX_ 22
 #define RX_ 19
+
+String data = "123.12,321.32,456.65,789.98",
+       delimiter = ",";
+String splited[4];
 
 void setup() {
   Serial.begin(115200);
   Serial1.begin(115200, SERIAL_8N1, RX_, TX_);
+
+  Serial.println(data);
+
+  for (int i = 0; i < 4; i++)
+  {
+    splited[i] = data.substring(0, data.indexOf(delimiter));
+    data.replace((splited[i] + ","), "");
+  }
+
+  Serial.println();
+  Serial.println(splited[0]);
+  Serial.println(splited[1]);
+  Serial.println(splited[2]);
+  Serial.println(splited[3]);
 }
 
 void loop() {
-
-  if (Serial1.available() > 0) {
-    Serial.println(char(Serial1.read()));
-  }
 }
