@@ -9,7 +9,7 @@ void setup() {
 
   /* --- Read Initialize Data for Filter Calibration --- */
   sensorInitialization();
-  // sequenceSensorReadingMethod();
+  sequenceSensorReadingMethod2();
 }
 
 void loop() {

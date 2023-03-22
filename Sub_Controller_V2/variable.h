@@ -3,8 +3,8 @@
 
 #define REALTIME 0
 #define EVERY_ONE_SECOND 1000
-#define ENABLE 0x00
-#define DISABLE 0x01
+#define ENABLE 0x01
+#define DISABLE 0x00
 
 class sensor_s {
 public:

@@ -221,7 +221,7 @@ static void sequenceSensorReadingMethod1() {
 static int sensorReadingIndex = 0;
 static unsigned long readingOrder = 0;
 static void sequenceSensorReadingMethod2() {
-  if (millis() - readingOrder >= 5000) {
+  if (millis() - readingOrder >= 10000) {
     readingOrder = millis();
     sensorReadingIndex++;
     if (sensorReadingIndex > 3)
