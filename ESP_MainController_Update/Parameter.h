@@ -1,29 +1,33 @@
-#include "FS.h"
 #ifndef _PARAMETER_H
 #define _PARAMETER_H
 
 #include <Arduino.h>
+#include "FS.h"
 #include <WiFi.h>
 #include <RTClib.h>
 #include <SPI.h>
 #include <SD.h>
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
+
 /*---------------- Serial Communication -------------------*/
 #define GLOBAL_BAUDRATE 115200
-#define SERIAL_FROM_SUB_TX 27
-#define SERIAL_FROM_SUB_RX 26
+#define TX_ 22
+#define RX_ 19
 #define SD_Card_SS 4
+
 /*---------------- Init Sensor -------------------*/
-RTC_DS1307 rtc; /*--------------- RealtimeClock ---------------*/
-File dataBackup;/*--------------- SD-Card ---------------------*/
+RTC_DS1307 rtc;  /*--------------- RealtimeClock ---------------*/
+File dataBackup; /*--------------- SD-Card ---------------------*/
 uint8_t second, minute, hour, day, month, year = 0;
+
 /*---------------- Serial Read Paramater-------------------*/
 String TDS;
 String pH;
 String Oxigen;
 String Temperature;
 String messageStr = "";
+
 /*---------------- MQTT Credentials ------------------*/
 const char* ssid = "Astro-X";                   /*---------- Wifi SSID ------------*/
 const char* password = "Heang187";              /*---------- Wifi Password -------------*/

@@ -9,6 +9,7 @@ void SD_Card_Init(void) {
     Serial.println(" SD-Card Found...!");
   }
 }
+
 void writeFile(const char* path, const char* message) {
   dataBackup = SD.open(path, FILE_WRITE);
   if (dataBackup) {
@@ -20,6 +21,7 @@ void writeFile(const char* path, const char* message) {
     Serial.println(" Error SD-Card...!");
   }
 }
-void data2SD_Card(void){
-  writeFile("Sensor Data:"," Tesing Data");
+
+void data2SD_Card(void) {
+  writeFile("Sensor Data:", " Tesing Data");
 }

@@ -12,6 +12,7 @@ void Setup_Wifi() { /*-------- Set up Wifi -----------*/
   Serial.println("IP Address: ");
   Serial.println(WiFi.localIP());
 }
+
 void MQTT_Reconnect() { /*-------- MQTT Reconnecting -----------*/
   while (!Client.connected()) {
     if (Client.connect(clientID, mqttUserName, mqttPassword)) {
@@ -26,6 +27,7 @@ void MQTT_Reconnect() { /*-------- MQTT Reconnecting -----------*/
     }
   }
 }
+
 void callback(char* topic, byte* payload, unsigned int length) {
   /*-------- Subcribe Call back -----------*/
   Serial.print("Message arrived in topic: ");
@@ -43,10 +45,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println("-----------------------");
   Serial.println(data);
 }
+
 void MQTT_Init(void) {
   Client.setServer(mqttServer, 1883);
   Client.setCallback(callback);
 }
+
 void Send2MQTT(void) {
   if (!Client.connected()) {
     MQTT_Reconnect();
