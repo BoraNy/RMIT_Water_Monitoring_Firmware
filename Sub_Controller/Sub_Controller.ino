@@ -10,7 +10,7 @@ void setup() {
 
   /* --- Read Initialize Data for Filter Calibration --- */
   sensorInitialization();
-  for (int i = 0; i < 20; i++) {
+  for (int i = 0; i < 3; i++) {
     readTemperatureSensor(&tempCFilter.oldReading);
     readPHSensor(PH_SENSOR_PIN, sensor.tempC, &PHFilter.oldReading);
     readTDSSensor(TDS_SENSOR_PIN, sensor.tempC, &TDSFilter.oldReading);
