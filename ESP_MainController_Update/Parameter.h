@@ -1,3 +1,4 @@
+#include "Wire.h"
 #ifndef _PARAMETER_H
 #define _PARAMETER_H
 
@@ -16,6 +17,10 @@
 #define RX_ 19
 #define SD_Card_SS 4
 
+#define SDA_1 27
+#define SCL_1 26
+TwoWire I2Cone = TwoWire(0);
+
 /*---------------- Init Sensor -------------------*/
 RTC_DS1307 rtc;  /*--------------- RealtimeClock ---------------*/
 File dataBackup; /*--------------- SD-Card ---------------------*/
@@ -29,8 +34,8 @@ String Temperature;
 String messageStr = "";
 
 /*---------------- MQTT Credentials ------------------*/
-const char* ssid = "C80";                   /*---------- Wifi SSID ------------*/
-const char* password = "012562535";              /*---------- Wifi Password -------------*/
+const char* ssid = "Astro-X";                   /*---------- Wifi SSID ------------*/
+const char* password = "Heang187";              /*---------- Wifi Password -------------*/
 const char* mqttServer = "broker.hivemq.com";   /*---------- MQTT Broker --------------*/
 const char* mqttUserName = "NPIC_MQTT";         /*---------- MQTT Username--------------*/
 const char* mqttPassword = "NPIC_RMIT_Project"; /*---------- MQTT Password--------------*/

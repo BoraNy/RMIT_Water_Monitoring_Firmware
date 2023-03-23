@@ -11,17 +11,24 @@
   }
   }
 */
-
+void check_serial(void) {
+  if (!Serial1) {
+    Serial.print(" Check Connection from Sub-controller");
+    while (1)
+      ;
+  } else {
+    Serial.println(" Ready for Serial Read ");
+  }
+}
 String serialData,
-       delimiter = ",";
+  delimiter = ",";
 String splited[4];
 
 void readSerial(void) {
   if (Serial1.available() > 0)
     serialData = Serial1.readStringUntil('\n');
 
-  for (int i = 0; i < 4; i++)
-  {
+  for (int i = 0; i < 4; i++) {
     splited[i] = serialData.substring(0, serialData.indexOf(delimiter));
     serialData.replace((splited[i] + ","), "");
   }

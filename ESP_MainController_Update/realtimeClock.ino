@@ -1,8 +1,10 @@
 #include "Parameter.h"
 
 void RTC_Init(void) {
-  if (!rtc.begin()) {
+  if (!rtc.begin(&I2Cone)) {
     Serial.println(" Couldn't find RealtimeClock");
+    while (1)
+      ;
   } else {
     Serial.println("Ready for RealtimeClock");
   }
