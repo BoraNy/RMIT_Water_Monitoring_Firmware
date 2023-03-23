@@ -14,17 +14,18 @@ void setup() {
   } else {
     Serial.println(" Ready for Serial Read ");
   }
-  
+
   Setup_Wifi();
-  MQTT_Reconnect();
   MQTT_Init();
-  SD_Card_Init();
-  RTC_Init();
+  Client.setServer(mqttServer, 1883);  //setting MQTT server
+  Client.setCallback(callback);
+  // SD_Card_Init();
+  // RTC_Init();
 }
 
 void loop() {
   readSerial();
-  getDateTime();
-  data2SD_Card();
+  // getDateTime();
+  // data2SD_Card();
   Send2MQTT();
 }
