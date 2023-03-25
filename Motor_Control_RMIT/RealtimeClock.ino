@@ -4,11 +4,11 @@ void RTCInit(void) {
   if (!RTC.begin()) {
     Serial.println(" Couldn't find RealtimeClock");
     while (1) {
-      blinker();
+      blinker(100);
     }
   } else {
     Serial.println("Ready for RealtimeClock");
-    digitalWrite(LED, 1);
+    digitalWrite(LED, LOW);
   }
   RTC.adjust(DateTime(__DATE__, __TIME__));
 }

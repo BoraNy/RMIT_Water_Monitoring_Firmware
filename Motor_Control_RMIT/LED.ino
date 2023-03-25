@@ -4,11 +4,10 @@ void LEDInit(void) {
   pinMode(LED, OUTPUT);
 }
 
-static unsigned long tick = 0;
-static bool state = true;
-
-void blinker(void) {
-  if (millis() - tick >= 500) {
+static void blinker(unsigned long wait) {
+  static unsigned long tick = 0;
+  static bool state = true;
+  if (millis() - tick >= wait) {
     tick = millis();
     digitalWrite(LED, state);
     state = !state;

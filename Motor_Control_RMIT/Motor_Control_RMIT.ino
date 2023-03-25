@@ -4,12 +4,12 @@ void setup() {
   Serial.begin(GLOBLE_BAUDRATE);
   LEDInit();
   RTCInit();
-  //motorInit(POT_ADC_PIN);
+  motorInit(POT_ADC_PIN);
 }
 
 void loop() {
   getDateTime();
-
-  manualPositionControl(POT_ADC_PIN);
-  // trackAndControlPosition(POT_ADC_PIN, hour);
+  //showTime();
+  //manualPositionControl(POT_ADC_PIN);
+  trackAndControlPosition(POT_ADC_PIN, hour);
 }

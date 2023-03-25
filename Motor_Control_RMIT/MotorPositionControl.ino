@@ -1,14 +1,15 @@
 #define QUATER_SPEED int(255 / 4)
 #define HALF_SPEED int(255 / 2)
 #define FULL_SPEED 255
-#define STARTUP_MOTOR_DELAY 500
-#define MOTOR_DELAY 100
+#define STARTUP_MOTOR_DELAY 0
+#define MOTOR_DELAY 0
+#define FILTER_SAMPLING 2000
 
 float oldReading = 0;
 float newReading = 0;
 const float BETA = 0.9;
 
-const int MAX_ADC_READING = 16,
+const int MAX_ADC_READING = 19,
           MIN_ADC_READING = 0;
 const int MAX_HOUR = 18,
           MIN_HOUR = 6;
@@ -26,58 +27,59 @@ void LowPassFilter(float noisySignal, float *newReading, float *oldReading,
 void motorInit(uint8_t adcPin) {
   /* --- Move Up --- */
   LowPassFilter(analogRead(adcPin), &newReading, &oldReading, &adcReading, BETA);
-  while (adcReading <= (MAX_ADC_READING)) {
+  while (adcReading <= (MAX_ADC_READING - 1)) {
     Serial.print("UP: ");
     Serial.println(adcReading);
-    blinker();
-    LowPassFilter(analogRead(adcPin), &newReading, &oldReading, &adcReading, BETA);
-    motor.drive(HALF_SPEED, STARTUP_MOTOR_DELAY);  // <-- Change Motor Direction Here
+    blinker(1000);
+    for (int i = 0; i < FILTER_SAMPLING; i++)
+      LowPassFilter(analogRead(adcPin), &newReading, &oldReading, &adcReading, BETA);
+    motor.drive(FULL_SPEED, STARTUP_MOTOR_DELAY);  // <-- Change Motor Direction Here
   }
 
   /* --- Move Down --- */
   LowPassFilter(analogRead(adcPin), &newReading, &oldReading, &adcReading, BETA);
-  while (adcReading >= (MIN_ADC_READING)) {
+  while (adcReading >= (MIN_ADC_READING + 1)) {
     Serial.print("DOWN: ");
     Serial.println(adcReading);
-    blinker();
-    LowPassFilter(analogRead(adcPin), &newReading, &oldReading, &adcReading, BETA);
-    motor.drive(-HALF_SPEED, STARTUP_MOTOR_DELAY);  // <-- Change Motor Direction Here
+    blinker(1000);
+    for (int i = 0; i < FILTER_SAMPLING; i++)
+      LowPassFilter(analogRead(adcPin), &newReading, &oldReading, &adcReading, BETA);
+    motor.drive(-FULL_SPEED, STARTUP_MOTOR_DELAY);  // <-- Change Motor Direction Here
   }
 }
 
 void trackAndControlPosition(uint8_t adcPin, uint8_t time) {
   /* --- (!!Integer is Good Enough) Use Linear Equation for Relation of Position and Hour --- */
   setPoint = map(time, MIN_HOUR, MAX_HOUR, MIN_ADC_READING, MAX_ADC_READING);
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < FILTER_SAMPLING; i++)
     LowPassFilter(analogRead(adcPin), &newReading, &oldReading, &adcReading, BETA);
   error = long(adcReading) - setPoint;
 
   if (error > 0)
-    motor.drive(-HALF_SPEED, MOTOR_DELAY);  // <-- Change Motor Direction Here
+    motor.drive(-FULL_SPEED, MOTOR_DELAY);
+  else if (error < 0)
+    motor.drive(FULL_SPEED, MOTOR_DELAY);
   else
-    motor.drive(HALF_SPEED, MOTOR_DELAY);  // <-- Change Motor Direction Here
+    motor.brake();
 }
 
-static long manualSetpoint = MIN_HOUR;
+int manualSetpoint = 9;
 void manualPositionControl(uint8_t adcPin) {
-  if (Serial.available() > 0) {
-    manualSetpoint = Serial.parseInt();
-
-    if (manualSetpoint > MAX_HOUR) manualSetpoint = MAX_HOUR;
-    if (manualSetpoint < MIN_HOUR) manualSetpoint = MIN_HOUR;
-  }
-
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < FILTER_SAMPLING; i++)
     LowPassFilter(analogRead(adcPin), &newReading, &oldReading, &adcReading, BETA);
-  error = long(adcReading) - manualSetpoint;
+  adcReading = int(adcReading);
+  error = adcReading - manualSetpoint;
+
+  if (error > 0)
+    motor.drive(-FULL_SPEED, MOTOR_DELAY);
+  else if (error < 0)
+    motor.drive(FULL_SPEED, MOTOR_DELAY);
+  else
+    motor.brake();
 
   Serial.print(adcReading);
   Serial.print(",\t");
+  Serial.print(manualSetpoint);
+  Serial.print(",\t");
   Serial.println(error);
-
-  if (error > 0)
-    motor.drive(-HALF_SPEED, MOTOR_DELAY);
-  else
-    motor.drive(HALF_SPEED, MOTOR_DELAY);
-  delay(1000);
 }
