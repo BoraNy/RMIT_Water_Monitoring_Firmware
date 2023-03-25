@@ -4,8 +4,9 @@ void setup() {
   Serial.begin(GLOBLE_BAUDRATE);
   LEDInit();
   RTCInit();
-  motorInit(POT_ADC_PIN);
+  //motorInit(POT_ADC_PIN);
 }
+
 void loop() {
   getDateTime();
 

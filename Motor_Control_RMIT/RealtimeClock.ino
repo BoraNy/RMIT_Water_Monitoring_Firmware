@@ -4,7 +4,7 @@ void RTCInit(void) {
   if (!RTC.begin()) {
     Serial.println(" Couldn't find RealtimeClock");
     while (1) {
-      Blink();
+      blinker();
     }
   } else {
     Serial.println("Ready for RealtimeClock");
@@ -22,6 +22,7 @@ void getDateTime(void) {
   month = now.month();
   year = now.year();
 }
+
 void showTime(void) {
   Serial.print(" Time :");
   Serial.print(" Hour:");
