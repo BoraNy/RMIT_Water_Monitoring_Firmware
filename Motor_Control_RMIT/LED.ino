@@ -1,8 +1,9 @@
 #include "Parameter.h"
 
-void _LED(void) {
+void LEDInit(void) {
   pinMode(LED, OUTPUT);
 }
+
 void Blink(void) {
   digitalWrite(LED, 1);
   delay(500);

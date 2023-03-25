@@ -1,6 +1,6 @@
 #include "Parameter.h"
 
-void RTC_Init(void) {
+void RTCInit(void) {
   if (!RTC.begin()) {
     Serial.println(" Couldn't find RealtimeClock");
     while (1) {

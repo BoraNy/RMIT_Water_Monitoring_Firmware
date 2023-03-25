@@ -15,18 +15,10 @@
 #define AIN_1 12
 #define AIN_2 11
 const int8_t offsetA = 1;
-Motor motor_A = Motor(AIN_1, AIN_2, PWM_A, offsetA, STBY); /*--------------- MotorA -----------------*/
-/*----------- ChannelB Pin ----------------*/
-#define PWM_B 7
-#define BIN_1 6
-#define BIN_2 5
-const int8_t offsetB = 1;
-Motor motor_B = Motor(BIN_1, BIN_2, PWM_B, offsetB, STBY); /*--------------- MotorB -----------------*/
-/*----------- Setmotor Speed ----------------*/
-const uint8_t MotorSpeed = 0;
+Motor motor = Motor(AIN_1, AIN_2, PWM_A, offsetA, STBY); 
 
-RTC_DS1307 RTC; /*--------------- RealtimeClock -----------------*/
-
+/*--------------- RealtimeClock -----------------*/
+RTC_DS1307 RTC; 
 unsigned long delayTime = 0;
 uint8_t second, minute, hour, day, month, year = 0;
 
