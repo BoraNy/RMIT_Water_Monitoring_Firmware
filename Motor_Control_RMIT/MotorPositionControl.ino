@@ -26,8 +26,8 @@ void LowPassFilter(float noisySignal, float *newReading, float *oldReading,
 
 void motorInit(uint8_t adcPin) {
   /* --- Move Up --- */
-  LowPassFilter(analogRead(adcPin), &newReading, &oldReading, &adcReading, BETA);
-  while (adcReading <= (MAX_ADC_READING - 1)) {
+  oldReading = analogRead(adcPin);
+  while (adcReading <= (MAX_ADC_READING)) {
     Serial.print("UP: ");
     Serial.println(adcReading);
     blinker(1000);
@@ -37,8 +37,8 @@ void motorInit(uint8_t adcPin) {
   }
 
   /* --- Move Down --- */
-  LowPassFilter(analogRead(adcPin), &newReading, &oldReading, &adcReading, BETA);
-  while (adcReading >= (MIN_ADC_READING + 1)) {
+  oldReading = analogRead(adcPin);
+  while (adcReading > (MIN_ADC_READING)) {
     Serial.print("DOWN: ");
     Serial.println(adcReading);
     blinker(1000);
