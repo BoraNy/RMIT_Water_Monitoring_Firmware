@@ -7,9 +7,9 @@
 
 float oldReading = 0;
 float newReading = 0;
-const float BETA = 0.9;
+const float BETA = 0.1;
 
-const int MAX_ADC_READING = 19,
+const int MAX_ADC_READING = 18,
           MIN_ADC_READING = 0;
 const int MAX_HOUR = 18,
           MIN_HOUR = 6;
@@ -27,7 +27,7 @@ void LowPassFilter(float noisySignal, float *newReading, float *oldReading,
 void motorInit(uint8_t adcPin) {
   /* --- Move Up --- */
   oldReading = analogRead(adcPin);
-  while (adcReading <= (MAX_ADC_READING)) {
+  while (int(adcReading) < (MAX_ADC_READING)) {
     Serial.print("UP: ");
     Serial.println(adcReading);
     blinker(1000);
@@ -38,7 +38,7 @@ void motorInit(uint8_t adcPin) {
 
   /* --- Move Down --- */
   oldReading = analogRead(adcPin);
-  while (adcReading > (MIN_ADC_READING)) {
+  while (int(adcReading) > (MIN_ADC_READING)) {
     Serial.print("DOWN: ");
     Serial.println(adcReading);
     blinker(1000);
@@ -53,7 +53,8 @@ void trackAndControlPosition(uint8_t adcPin, uint8_t time) {
   setPoint = map(time, MIN_HOUR, MAX_HOUR, MIN_ADC_READING, MAX_ADC_READING);
   for (int i = 0; i < FILTER_SAMPLING; i++)
     LowPassFilter(analogRead(adcPin), &newReading, &oldReading, &adcReading, BETA);
-  error = long(adcReading) - setPoint;
+  adcReading = int(adcReading);
+  error = adcReading - setPoint;
 
   if (error > 0)
     motor.drive(-FULL_SPEED, MOTOR_DELAY);
@@ -61,6 +62,12 @@ void trackAndControlPosition(uint8_t adcPin, uint8_t time) {
     motor.drive(FULL_SPEED, MOTOR_DELAY);
   else
     motor.brake();
+
+  Serial.print(adcReading);
+  Serial.print(",\t");
+  Serial.print(setPoint);
+  Serial.print(",\t");
+  Serial.println(error);
 }
 
 int manualSetpoint = 9;
