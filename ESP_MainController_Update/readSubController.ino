@@ -12,12 +12,12 @@
   }
 */
 void check_serial(void) {
-  if (!Serial1) {
+  if (!Serial) {
     Serial.print(" Check Connection from Sub-controller");
     while (1)
       ;
   } else {
-    Serial.println(" Ready for Serial Read ");
+    Serial.println(" Ready for Serial Read...!");
   }
 }
 String serialData,
@@ -25,8 +25,8 @@ String serialData,
 String splited[4];
 
 void readSerial(void) {
-  if (Serial1.available() > 0)
-    serialData = Serial1.readStringUntil('\n');
+  if (Serial.available() > 0)
+    serialData = Serial.readStringUntil('\n');
 
   for (int i = 0; i < 4; i++) {
     splited[i] = serialData.substring(0, serialData.indexOf(delimiter));

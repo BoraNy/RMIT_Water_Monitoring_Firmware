@@ -2,11 +2,11 @@
 
 void SD_Card_Init(void) {
   if (!SD.begin(SD_Card_SS)) {
-    Serial.println(" SD-Card not Found...!");
+    Serial.println("SD-Card not Found...!");
     while (1)
       ;
   } else {
-    Serial.println(" SD-Card Found...!");
+    Serial.print(" SD-Card Found...!");
   }
 }
 
