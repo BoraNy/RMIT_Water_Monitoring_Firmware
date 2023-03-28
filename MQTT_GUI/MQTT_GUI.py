@@ -6,7 +6,7 @@ from time import strftime
 from paho.mqtt import client as mqtt_client
 import json
 import random
-pH, dissolvedOxygen, Temperature, Turbidity = 0, 0, 0, 0
+pH, dissolvedOxygen, Temperature, TDS = 0, 0, 0, 0
 window = Tk()
 window.geometry("1920x1080")
 window.title("Water Quality Monitoring")
@@ -52,12 +52,12 @@ def DOInfo():
 label2 = Label(window, font=("Arial", 18), foreground="black")
 label2.place(x=950, y=230)
 
-TurbidityInfoState = ''
+TDSInfoState = ''
 
 
-def TurbidityInfo():
-    label3.config(text="Turbidity State:\t\t" + TurbidityInfoState)
-    label3.after(1000, TurbidityInfo)
+def TDSInfo():
+    label3.config(text="TDS State:\t\t" + TDSInfoState)
+    label3.after(1000, TDSInfo)
 
 
 label3 = Label(window, font=("Arial", 18), foreground="black")
@@ -95,12 +95,12 @@ temCircle = ttk.Meter(window, amounttotal=150  # --> Maximum Value
                       , bootstyle=PRIMARY, interactive=False, textfont=["Arial", 26, 'bold'], textright="°C", subtext="Temperature", subtextfont=["Arial", 15, "bold"])
 temCircle.place(x=70, y=200)
 
-# --> Turbidity
+# --> TDS
 turCircle = ttk.Meter(window, amounttotal=3000  # --> Maximum Value
-                      , amountused=Turbidity  # --> access data
+                      , amountused=TDS  # --> access data
                       , metersize=250   # --> Radius of Circle
                       , meterthickness=20  # --> Width of Circle
-                      , bootstyle=PRIMARY, interactive=False, textfont=["Arial", 26, 'bold'], textright="NTU", subtext="Turbidity", subtextfont=["Arial", 15, "bold"])
+                      , bootstyle=PRIMARY, interactive=False, textfont=["Arial", 26, 'bold'], textright="NTU", subtext="TDS", subtextfont=["Arial", 15, "bold"])
 turCircle.place(x=450, y=200)
 
 # --> Potential of Hydrogen
@@ -130,12 +130,12 @@ quality_logo.create_image(False, False, anchor=NW, image=Quality_logo)
 arduino = SerialCommunication(115200)
 # -----------------------------------------> <-----------------------------------------#
 def readArduinoSerial():
-    global Turbidity, pH, dissolvedOxygen, Temperature
-    global pHInfoState, DOInfoState, TurbidityInfoState, TemperatureInfoState
+    global TDS, pH, dissolvedOxygen, Temperature
+    global pHInfoState, DOInfoState, TDSInfoState, TemperatureInfoState
 
     try:
         data = arduino.read()
-        Turbidity = float(data[0])/100
+        TDS = float(data[0])/100
         pH = float(data[1])
         dissolvedOxygen = float(data[2])/1000
         Temperature = float(data[3])
@@ -166,16 +166,16 @@ def MQTT_Connection() -> mqtt_client:
 
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, message):
-        global Turbidity, pH, dissolvedOxygen, Temperature
-        global pHInfoState, DOInfoState, TurbidityInfoState, TemperatureInfoState
+        global TDS, pH, dissolvedOxygen, Temperature
+        global pHInfoState, DOInfoState, TDSInfoState, TemperatureInfoState
         #---------------- Print Data from Json ---------------------#
         data = json.loads(message.payload.decode())
         Temperature = str(data["notification"]["parameters"]["Temperature"])
-        Turbidity = str(data["notification"]["parameters"]["Turbidity"])
+        TDS = str(data["notification"]["parameters"]["TDS"])
         pH = str(data["notification"]["parameters"]["pH"])
         dissolvedOxygen = str(data["notification"]["parameters"]["Oxigen"])
-        print("Temperature:" + Temperature + "\tTurbidity:" +
-              Turbidity + "\tpH:" + pH + "\t\tOxigen:" + dissolvedOxygen)
+        print("Temperature:" + Temperature + "\tTDS:" +
+              TDS + "\tpH:" + pH + "\t\tOxigen:" + dissolvedOxygen)
         try:
             # --- Change Color Info Here
             if (pH >= 0) and (pH < 4):
@@ -204,15 +204,15 @@ def subscribe(client: mqtt_client):
                 oxygenCircle.configure(bootstyle=PRIMARY)
                 DOInfoState = 'EXCELLENT'
 
-            if (Turbidity >= 0) and (Turbidity <= 500):
+            if (TDS >= 0) and (TDS <= 500):
                 turCircle.configure(bootstyle=DANGER)
-                TurbidityInfoState = 'LOW'
-            elif (Turbidity > 500) and (Turbidity <= 1000):
+                TDSInfoState = 'LOW'
+            elif (TDS > 500) and (TDS <= 1000):
                 turCircle.configure(bootstyle=WARNING)
-                TurbidityInfoState = 'MEDIUM'
-            elif (Turbidity > 1000):
+                TDSInfoState = 'MEDIUM'
+            elif (TDS > 1000):
                 turCircle.configure(bootstyle=PRIMARY)
-                TurbidityInfoState = 'HIGH'
+                TDSInfoState = 'HIGH'
 
             if (Temperature >= 0) and (Temperature <= 10):
                 temCircle.configure(bootstyle=DANGER)
@@ -224,12 +224,12 @@ def subscribe(client: mqtt_client):
                 temCircle.configure(bootstyle=WARNING)
                 TemperatureInfoState = 'WARNING'
 
-            print(Turbidity, pH, dissolvedOxygen, Temperature)
+            print(TDS, pH, dissolvedOxygen, Temperature)
         except:
             pass
         # Assign Value to Dashboard
         temCircle.configure(amountused=Temperature)
-        turCircle.configure(amountused=Turbidity)
+        turCircle.configure(amountused=TDS)
         phCircle.configure(amountused=pH)
         oxygenCircle.configure(amountused=dissolvedOxygen)
     client.subscribe(topic)
@@ -241,7 +241,7 @@ if __name__ == '__main__':
     time()
     pHInfo()
     DOInfo()
-    TurbidityInfo()
+    TDSInfo()
     TemperatureInfo()
     client = MQTT_Connection()
     subscribe(client)
