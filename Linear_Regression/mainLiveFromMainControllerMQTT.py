@@ -3,7 +3,17 @@ import matplotlib.pyplot as plt
 from drawnow import*
 from random import uniform
 from datetime import datetime
-from serialModule import SerialCommunication
+from time import strftime
+from paho.mqtt import client as mqtt_client
+import json
+import random
+from datetime import datetime
+import pandas
+from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
+import pickle
+
+pH, dissolvedOxygen, Temperature, TDS = 0, 0, 0, 0
 
 
 class LiveDataMonitoring:
@@ -36,32 +46,17 @@ class LiveDataMonitoring:
                  label=f'Temperature = {self.temperature[len(self.temperature)-1]:.2f}°C')
         plt.ylim(0, 50)
         plt.legend(loc='upper left')
-        plt2 = plt.twinx()
-        plt2.plot(self.predictedTempearture, 'r--',
-                  label=f'Predicted = {self.predictedTempearture[len(self.predictedTempearture)-1]:.2f}°C')
-        plt.ylim(0, 50)
-        plt2.legend(loc='lower left')
 
         plt.subplot(222)
         plt.plot(self.pH, label=f'pH = {self.pH[len(self.pH)-1]:.2f}')
         plt.ylim(0, 14)
         plt.legend(loc='upper left')
-        plt3 = plt.twinx()
-        plt3.plot(self.predictedpH, 'r--',
-                  label=f'Predicted = {self.predictedpH[len(self.predictedpH)-1]:.2f}')
-        plt.ylim(0, 14)
-        plt3.legend(loc='lower left')
 
         plt.subplot(223)
         plt.plot(self.TDS,
                  label=f'TDS = {self.TDS[len(self.TDS)-1]:.2f}ppm')
         plt.ylim(0, 1000)
         plt.legend(loc='upper left')
-        plt4 = plt.twinx()
-        plt4.plot(self.predictedTDS, 'r--',
-                  label=f'Predicted = {self.predictedTDS[len(self.predictedTDS)-1]:.2f}ppm')
-        plt.ylim(0, 1000)
-        plt4.legend(loc='lower left')
 
         plt.subplot(224)
         plt.plot(self.dissolvedOxygen,
@@ -69,60 +64,85 @@ class LiveDataMonitoring:
         plt.ylim(0, 30)
         plt.legend(loc='upper left')
         plt4 = plt.twinx()
-        plt4.plot(self.predictedDissolvedOxygen, 'r--',
+        plt4.plot(self.predictedDissolvedOxygen, 'g:',
                   label=f'Predicted = {self.predictedDissolvedOxygen[len(self.predictedDissolvedOxygen)-1]:.2f}mg/L')
         plt.ylim(0, 30)
         plt4.legend(loc='lower left')
 
-    def visualize(self, temperature, predictedTemperature, pH, predictedpH, TDS, predictedTDS, dissolvedOxygen, predictedDissolveOxygen):
+    def visualize(self, temperature, pH, TDS, dissolvedOxygen, predictedDissolvedOxygen):
         # Get Raw Data Update
         self.temperature.append(temperature)
         self.pH.append(pH)
         self.TDS.append(TDS)
         self.dissolvedOxygen.append(dissolvedOxygen)
-
-        # Get Predicted Data Update
-        self.predictedTempearture.append(predictedTemperature)
-        self.predictedpH.append(predictedpH)
-        self.predictedTDS.append(predictedTDS)
-        self.predictedDissolvedOxygen.append(predictedDissolveOxygen)
+        self.predictedDissolvedOxygen.append(predictedDissolvedOxygen)
 
         drawnow(self.createFigure)
         plt.pause(1e-6)
         self.counter += 1
         if self.counter > 60:
             self.temperature.pop(0)
-            self.predictedTempearture.pop(0)
-
             self.pH.pop(0)
-            self.predictedpH.pop(0)
-
             self.TDS.pop(0)
-            self.predictedTDS.pop(0)
-
             self.dissolvedOxygen.pop(0)
             self.predictedDissolvedOxygen.pop(0)
 
 
-if __name__ == '__main__':
-    live = LiveDataMonitoring()
-    controllerPort = SerialCommunication(115200)
-    while True:
-        data = controllerPort.read()
-        
+#---> Read Data over MQTT -----------#
+broker = "broker.hivemq.com"
+port = 1883
+topic = "Message"
+client_ID = f'python-mqtt-{random.randint(0, 100)}'
+username = "NPIC_MQTT"
+password = "NPIC_RMIT_Project"
+
+#----------------------- Check Connection --------------------#
+
+
+def MQTT_Connection() -> mqtt_client:
+    def on_connection(client, userdata, flags, rc):
+        if rc == 0:
+            print("Successfully Connected to MQTT Broker!")
+        else:
+            print("Fialed to Connect to MQTT Broker")
+    client = mqtt_client.Client(client_ID)
+    client.username_pw_set(username, password)
+    client.on_connect = on_connection
+    client.connect(broker, port)
+    return client
+
+#----------------------- Check Subscribe --------------------#
+
+
+def subscribe(client: mqtt_client):
+    def on_message(client, userdata, message):
+        global TDS, pH, dissolvedOxygen, Temperature
+        global pHInfoState, DOInfoState, TDSInfoState, TemperatureInfoState
+        #---------------- Print Data from Json ---------------------#
         try:
-            TDS = float(data[0])
-            pH = float(data[1])
-            dissolvedOxygen = float(data[2])
-            temperatureC = float(data[3])
+            data = json.loads(message.payload.decode())
         except:
             pass
+        Temperature = str(data["notification"]["parameters"]["Temperature"])
+        TDS = str(data["notification"]["parameters"]["TDS"])
+        pH = str(data["notification"]["parameters"]["pH"])
+        dissolvedOxygen = str(data["notification"]["parameters"]["Oxygen"])
 
-        live.visualize(
-            temperatureC, temperatureC+uniform(-1.0, 1.0),
-            pH, pH+uniform(-0.5, 0.5),
-            TDS, TDS+uniform(-1.0, 1.0),
-            dissolvedOxygen, dissolvedOxygen+uniform(-1.0, 1.0),
-        )
-        live.logDataToFile('Test1_Choram_Island')
-        print(TDS, pH, dissolvedOxygen, temperatureC)
+    client.subscribe(topic)
+    client.on_message = on_message
+
+
+filename = 'water_quality_model.pkl'
+if __name__ == '__main__':
+    live = LiveDataMonitoring()
+    client = MQTT_Connection()
+    subscribe(client)
+    client.loop_start()
+    AIModel = pickle.load(open(filename, 'rb'))
+
+    while True:
+        X_data = [[Temperature, pH, TDS]]
+        predictedDissolvedOxygen = AIModel.predict(X_data)
+        live.visualize(float(Temperature), float(pH), float(TDS), float(
+            dissolvedOxygen), float(predictedDissolvedOxygen))
+        # client.loop_stop()
