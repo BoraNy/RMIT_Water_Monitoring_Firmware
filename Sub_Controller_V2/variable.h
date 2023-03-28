@@ -3,8 +3,8 @@
 
 #define REALTIME 0
 #define EVERY_ONE_SECOND 1000
-#define ENABLE 0x01
-#define DISABLE 0x00
+#define ENABLE 0x00
+#define DISABLE 0x01
 
 class sensor_s {
 public:
@@ -24,7 +24,7 @@ struct filter_s {
   float newReading = 0;
 };
 
-const float BETA = 0.9;
+const float BETA = 0.1;
 float2int_S PH, dissOxygen, tempC, TDS;
 
 #endif

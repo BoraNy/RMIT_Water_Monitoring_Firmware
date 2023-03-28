@@ -9,7 +9,12 @@ void setup() {
 
   /* --- Read Initialize Data for Filter Calibration --- */
   sensorInitialization();
-  sequenceSensorReadingMethod2();
+  unsigned long startUpTime = millis();
+  while (startUpTime < 20000)
+  {
+    startUpTime = millis();
+    sensorStartupSampling();
+  }
 }
 
 void loop() {

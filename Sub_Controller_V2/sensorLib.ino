@@ -45,10 +45,10 @@ float PHValue;
 #define CAL2_V (1300)  // mv
 #define CAL2_T (15)    // ℃
 
-uint8_t Temperaturet;
-uint16_t ADC_Raw;
-uint16_t ADC_Voltage;
-uint16_t DO;
+static uint8_t Temperaturet;
+static uint16_t ADC_Raw;
+static uint16_t ADC_Voltage;
+static uint16_t DO;
 
 const uint16_t DO_Table[41] = {
   14460, 14220, 13820, 13440, 13090, 12740, 12420,
@@ -220,10 +220,13 @@ static void sequenceSensorReadingMethod1() {
 
 static int sensorReadingIndex = 0;
 static unsigned long readingOrder = 0;
+const unsigned long samplingTime = 5000;
 static void sequenceSensorReadingMethod2() {
-  if (millis() - readingOrder >= 10000) {
+  if (millis() - readingOrder >= samplingTime) {
     readingOrder = millis();
     sensorReadingIndex++;
+
+
     if (sensorReadingIndex > 3)
       sensorReadingIndex = 0;
   }
@@ -247,6 +250,39 @@ static void sequenceSensorReadingMethod2() {
     case 3:
       enableSensor(DISABLE, DISABLE, DISABLE, ENABLE);
       readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC, &sensor.dissOxygen);
+      break;
+  }
+}
+
+void sensorStartupSampling(void)
+{
+  if (millis() - readingOrder >= samplingTime) {
+    readingOrder = millis();
+    sensorReadingIndex++;
+
+    if (sensorReadingIndex > 3)
+      sensorReadingIndex = 0;
+  }
+
+  switch (sensorReadingIndex) {
+    case 0:
+      enableSensor(ENABLE, DISABLE, DISABLE, DISABLE);
+      readTemperatureSensor(&tempCFilter.oldReading);
+      break;
+
+    case 1:
+      enableSensor(DISABLE, ENABLE, DISABLE, DISABLE);
+      readPHSensor(PH_SENSOR_PIN, sensor.tempC, &PHFilter.oldReading);
+      break;
+
+    case 2:
+      enableSensor(DISABLE, DISABLE, ENABLE, DISABLE);
+      readTDSSensor(TDS_SENSOR_PIN, sensor.tempC, &TDSFilter.oldReading);
+      break;
+
+    case 3:
+      enableSensor(DISABLE, DISABLE, DISABLE, ENABLE);
+      readOxygenSensor(OXYGEN_SENSOR_PIN, sensor.tempC, &dissOxygenFilter.oldReading);
       break;
   }
 }
