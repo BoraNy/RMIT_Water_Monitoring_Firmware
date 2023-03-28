@@ -59,29 +59,33 @@ class LiveDataMonitoring:
         plt.legend(loc='upper left')
 
         plt.subplot(224)
-        plt.plot(self.dissolvedOxygen, 'g',
+        plt.plot(self.dissolvedOxygen,
                  label=f'Dissolved Oxygen = {self.dissolvedOxygen[len(self.dissolvedOxygen)-1]:.2f}mg/L')
         plt.ylim(0, 30)
         plt.legend(loc='upper left')
+        plt4 = plt.twinx()
+        plt4.plot(self.predictedDissolvedOxygen, 'g:',
+                  label=f'Predicted = {self.predictedDissolvedOxygen[len(self.predictedDissolvedOxygen)-1]:.2f}mg/L')
+        plt.ylim(0, 30)
+        plt4.legend(loc='lower left')
 
-    def visualize(self, temperature, pH, TDS, dissolvedOxygen):
+    def visualize(self, temperature, pH, TDS, dissolvedOxygen, predictedDissolvedOxygen):
         # Get Raw Data Update
         self.temperature.append(temperature)
         self.pH.append(pH)
         self.TDS.append(TDS)
         self.dissolvedOxygen.append(dissolvedOxygen)
+        self.predictedDissolvedOxygen.append(predictedDissolvedOxygen)
 
         drawnow(self.createFigure)
         plt.pause(1e-6)
         self.counter += 1
         if self.counter > 60:
             self.temperature.pop(0)
-
             self.pH.pop(0)
-
             self.TDS.pop(0)
-
             self.dissolvedOxygen.pop(0)
+            self.predictedDissolvedOxygen.pop(0)
 
 
 #---> Read Data over MQTT -----------#
@@ -137,8 +141,8 @@ if __name__ == '__main__':
     AIModel = pickle.load(open(filename, 'rb'))
 
     while True:
-        X = [[Temperature, pH, TDS]]
-        dissolvedOxygen = AIModel.predict(X)
-        live.visualize(float(Temperature), float(
-            pH), float(TDS), float(dissolvedOxygen))
+        X_data = [[Temperature, pH, TDS]]
+        predictedDissolvedOxygen = AIModel.predict(X_data)
+        live.visualize(float(Temperature), float(pH), float(TDS), float(
+            dissolvedOxygen), float(predictedDissolvedOxygen))
         # client.loop_stop()
