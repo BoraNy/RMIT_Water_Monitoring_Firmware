@@ -27,6 +27,10 @@ String Oxigen;
 String Temperature;
 String messageStr = "";
 
+String serialData,
+       delimiter = ",";
+String splited[4];
+
 /*---------------- MQTT Credentials ------------------*/
 const char* ssid = "Astro-X";                   /*---------- Wifi SSID ------------*/
 const char* password = "Heang187";              /*---------- Wifi Password -------------*/

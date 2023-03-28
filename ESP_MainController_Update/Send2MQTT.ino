@@ -60,8 +60,12 @@ void Send2MQTT(void) {
   byte arraySize = messageStr.length() + 1;
   char message[arraySize];
   messageStr.toCharArray(message, arraySize);
-  Client.publish(topic, message);
-  Serial.println("Public Data: ");
+  if (serialData != "")
+    Client.publish(topic, message);
+    
+  //Serial.print("Public Data: ");
+  //Serial.println(messageStr);
   messageStr = ""; /*----------- Reset String --------------*/
+  serialData = ""; // <-- Erase Everything in Serial Data
   delay(10);
 }

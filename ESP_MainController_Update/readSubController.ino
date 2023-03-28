@@ -20,13 +20,12 @@ void check_serial(void) {
     Serial.println(" Ready for Serial Read...!");
   }
 }
-String serialData,
-  delimiter = ",";
-String splited[4];
 
 void readSerial(void) {
-  if (Serial.available() > 0)
+  while (Serial.available() > 0)
     serialData = Serial.readStringUntil('\n');
+
+  // Serial.println(serialData);
 
   for (int i = 0; i < 4; i++) {
     splited[i] = serialData.substring(0, serialData.indexOf(delimiter));
