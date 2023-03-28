@@ -23,7 +23,7 @@ uint8_t second, minute, hour, day, month, year = 0;
 /*---------------- Serial Read Paramater-------------------*/
 String TDS;
 String pH;
-String Oxigen;
+String Oxygen;
 String Temperature;
 String messageStr = "";
 

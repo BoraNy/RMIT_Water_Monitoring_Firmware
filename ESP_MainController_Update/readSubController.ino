@@ -34,6 +34,6 @@ void readSerial(void) {
 
   TDS = splited[0];
   pH = splited[1];
-  Oxigen = splited[2];
+  Oxygen = splited[2];
   Temperature = splited[3];
 }

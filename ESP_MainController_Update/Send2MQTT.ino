@@ -56,13 +56,13 @@ void Send2MQTT(void) {
     MQTT_Reconnect();
   }
   Client.loop();
-  messageStr = "{\"action\": \"notification/insert\",\"deviceId\": \"s3s9TFhT9WbDsA0CxlWeAKuZykjcmO6PoxK6\",\"notification\":{\"notification\": \"Temperature\",\"parameters\":{\"Temperature\":" + String(Temperature) + ",\"TDS\":" + String(TDS) + ",\"pH\":" + String(pH) + ",\"Oxigen\":" + String(Oxigen) + "}}}";
+  messageStr = "{\"action\": \"notification/insert\",\"deviceId\": \"s3s9TFhT9WbDsA0CxlWeAKuZykjcmO6PoxK6\",\"notification\":{\"notification\": \"Temperature\",\"parameters\":{\"Temperature\":" + String(Temperature) + ",\"TDS\":" + String(TDS) + ",\"pH\":" + String(pH) + ",\"Oxygen\":" + String(Oxygen) + "}}}";
   byte arraySize = messageStr.length() + 1;
   char message[arraySize];
   messageStr.toCharArray(message, arraySize);
   if (serialData != "")
     Client.publish(topic, message);
-    
+
   //Serial.print("Public Data: ");
   //Serial.println(messageStr);
   messageStr = ""; /*----------- Reset String --------------*/

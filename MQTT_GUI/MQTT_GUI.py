@@ -6,6 +6,8 @@ from time import strftime
 from paho.mqtt import client as mqtt_client
 import json
 import random
+from datetime import datetime
+
 pH, dissolvedOxygen, Temperature, TDS = 0, 0, 0, 0
 window = Tk()
 window.geometry("1920x1080")
@@ -100,7 +102,7 @@ turCircle = ttk.Meter(window, amounttotal=3000  # --> Maximum Value
                       , amountused=TDS  # --> access data
                       , metersize=250   # --> Radius of Circle
                       , meterthickness=20  # --> Width of Circle
-                      , bootstyle=PRIMARY, interactive=False, textfont=["Arial", 26, 'bold'], textright="NTU", subtext="TDS", subtextfont=["Arial", 15, "bold"])
+                      , bootstyle=PRIMARY, interactive=False, textfont=["Arial", 26, 'bold'], textright="ppm", subtext="TDS", subtextfont=["Arial", 15, "bold"])
 turCircle.place(x=450, y=200)
 
 # --> Potential of Hydrogen
@@ -147,6 +149,14 @@ topic = "Message"
 client_ID = f'python-mqtt-{random.randint(0, 100)}'
 username = "NPIC_MQTT"
 password = "NPIC_RMIT_Project"
+
+
+def logDataToFile(fileName, temperature, ph, tds, dissolvedOxygen):
+    with open(f'./{fileName}.csv', 'a+') as logFile:
+        logFile.write(
+            f'{datetime.now()},{temperature},{ph},{tds},{dissolvedOxygen}\n')
+        logFile.close()
+
 #----------------------- Check Connection --------------------#
 
 
@@ -161,6 +171,7 @@ def MQTT_Connection() -> mqtt_client:
     client.on_connect = on_connection
     client.connect(broker, port)
     return client
+
 #----------------------- Check Subscribe --------------------#
 
 
@@ -169,14 +180,21 @@ def subscribe(client: mqtt_client):
         global TDS, pH, dissolvedOxygen, Temperature
         global pHInfoState, DOInfoState, TDSInfoState, TemperatureInfoState
         #---------------- Print Data from Json ---------------------#
-        data = json.loads(message.payload.decode())
+        try:
+            data = json.loads(message.payload.decode())
+        except:
+            pass
         Temperature = str(data["notification"]["parameters"]["Temperature"])
         TDS = str(data["notification"]["parameters"]["TDS"])
         pH = str(data["notification"]["parameters"]["pH"])
-        dissolvedOxygen = str(data["notification"]["parameters"]["Oxigen"])
-        print("Temperature:" + Temperature + "\tTDS:" +
-              TDS + "\tpH:" + pH + "\t\tOxigen:" + dissolvedOxygen)
+        dissolvedOxygen = str(data["notification"]["parameters"]["Oxygen"])
+        # print("Temperature:" + Temperature + "\tTDS:" +
+        #       TDS + "\tpH:" + pH + "\t\tOxygen:" + dissolvedOxygen)
         try:
+            pH = float(pH)
+            dissolvedOxygen = float(dissolvedOxygen)
+            TDS = float(TDS)
+            Temperature = float(Temperature)
             # --- Change Color Info Here
             if (pH >= 0) and (pH < 4):
                 phCircle.configure(bootstyle=DANGER)
@@ -224,9 +242,12 @@ def subscribe(client: mqtt_client):
                 temCircle.configure(bootstyle=WARNING)
                 TemperatureInfoState = 'WARNING'
 
+            logDataToFile('NPIC_Pond_Data_for_AI', temperature=Temperature,
+                          ph=pH, tds=TDS, dissolvedOxygen=dissolvedOxygen)
             print(TDS, pH, dissolvedOxygen, Temperature)
         except:
             pass
+
         # Assign Value to Dashboard
         temCircle.configure(amountused=Temperature)
         turCircle.configure(amountused=TDS)
