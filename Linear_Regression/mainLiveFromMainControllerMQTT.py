@@ -9,6 +9,7 @@ import json
 import random
 from datetime import datetime
 import pandas
+import numpy as np
 from sklearn import model_selection
 from sklearn.linear_model import LogisticRegression
 import pickle
@@ -121,12 +122,12 @@ def subscribe(client: mqtt_client):
         #---------------- Print Data from Json ---------------------#
         try:
             data = json.loads(message.payload.decode())
+            Temperature = str(data["notification"]["parameters"]["Temperature"])
+            TDS = str(data["notification"]["parameters"]["TDS"])
+            pH = str(data["notification"]["parameters"]["pH"])
+            dissolvedOxygen = str(data["notification"]["parameters"]["Oxygen"])
         except:
             pass
-        Temperature = str(data["notification"]["parameters"]["Temperature"])
-        TDS = str(data["notification"]["parameters"]["TDS"])
-        pH = str(data["notification"]["parameters"]["pH"])
-        dissolvedOxygen = str(data["notification"]["parameters"]["Oxygen"])
 
     client.subscribe(topic)
     client.on_message = on_message
@@ -141,7 +142,8 @@ if __name__ == '__main__':
     AIModel = pickle.load(open(filename, 'rb'))
 
     while True:
-        X_data = [[Temperature, pH, TDS]]
+        # print(Temperature, pH, TDS, dissolvedOxygen)
+        X_data = np.array([[Temperature, pH, TDS]], dtype=np.float64)
         predictedDissolvedOxygen = AIModel.predict(X_data)
         live.visualize(float(Temperature), float(pH), float(TDS), float(
             dissolvedOxygen), float(predictedDissolvedOxygen))

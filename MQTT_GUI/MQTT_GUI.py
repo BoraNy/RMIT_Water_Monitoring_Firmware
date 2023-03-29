@@ -9,6 +9,7 @@ import random
 from datetime import datetime
 
 pH, dissolvedOxygen, Temperature, TDS = 0, 0, 0, 0
+data = ''
 window = Tk()
 window.geometry("1920x1080")
 window.title("Water Quality Monitoring")
@@ -98,7 +99,7 @@ temCircle = ttk.Meter(window, amounttotal=150  # --> Maximum Value
 temCircle.place(x=70, y=200)
 
 # --> TDS
-turCircle = ttk.Meter(window, amounttotal=3000  # --> Maximum Value
+turCircle = ttk.Meter(window, amounttotal=1000  # --> Maximum Value
                       , amountused=TDS  # --> access data
                       , metersize=250   # --> Radius of Circle
                       , meterthickness=20  # --> Width of Circle
@@ -177,19 +178,19 @@ def MQTT_Connection() -> mqtt_client:
 
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, message):
+        global data
         global TDS, pH, dissolvedOxygen, Temperature
         global pHInfoState, DOInfoState, TDSInfoState, TemperatureInfoState
         #---------------- Print Data from Json ---------------------#
         try:
             data = json.loads(message.payload.decode())
+            Temperature = str(data["notification"]["parameters"]["Temperature"])
+            TDS = str(data["notification"]["parameters"]["TDS"])
+            pH = str(data["notification"]["parameters"]["pH"])
+            dissolvedOxygen = str(data["notification"]["parameters"]["Oxygen"])
         except:
             pass
-        Temperature = str(data["notification"]["parameters"]["Temperature"])
-        TDS = str(data["notification"]["parameters"]["TDS"])
-        pH = str(data["notification"]["parameters"]["pH"])
-        dissolvedOxygen = str(data["notification"]["parameters"]["Oxygen"])
-        # print("Temperature:" + Temperature + "\tTDS:" +
-        #       TDS + "\tpH:" + pH + "\t\tOxygen:" + dissolvedOxygen)
+        
         try:
             pH = float(pH)
             dissolvedOxygen = float(dissolvedOxygen)
