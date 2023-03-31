@@ -8,7 +8,7 @@ void RTC_Init(void) {
   } else {
     Serial.print("Ready for RealtimeClock...!");
   }
-  rtc.adjust(DateTime(__DATE__, __TIME__));
+  //rtc.adjust(DateTime(__DATE__, __TIME__));
 }
 
 void getDateTime(void) {

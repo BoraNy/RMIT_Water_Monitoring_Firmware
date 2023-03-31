@@ -10,7 +10,7 @@ void RTCInit(void) {
     Serial.println("Ready for RealtimeClock");
     digitalWrite(LED, LOW);
   }
-  // RTC.adjust(DateTime(__DATE__, __TIME__));
+  //RTC.adjust(DateTime(__DATE__, __TIME__));
 }
 
 void getDateTime(void) {

@@ -25,7 +25,7 @@ void readSerial(void) {
   while (Serial.available() > 0)
     serialData = Serial.readStringUntil('\n');
 
-  // Serial.println(serialData);
+     Serial.println(serialData);
 
   for (int i = 0; i < 4; i++) {
     splited[i] = serialData.substring(0, serialData.indexOf(delimiter));

@@ -7,7 +7,7 @@
 
 float oldReading = 0;
 float newReading = 0;
-const float BETA = 0.1;
+const float BETA = 0.05;
 
 const int MAX_ADC_READING = 18,
           MIN_ADC_READING = 0;
