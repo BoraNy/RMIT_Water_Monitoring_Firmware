@@ -3,16 +3,21 @@
 #include "variable.h"
 #include "kalmanFilter.h"
 
-filter_s tempCFilter, PHFilter, TDSFilter, dissOxygenFilter;
+KalmanFilter KF_pH, KF_Turbidity, KF_Temperature, KF_DO;
 
 void setup() {
   Serial.begin(115200);
 
+  /* --- Initialize Filter --- */
+  KF_pH.init(Qd, R);
+  KF_Turbidity.init(Qd, R);
+  KF_Temperature.init(Qd, R);
+  KF_DO.init(Qd, R);
+
   /* --- Read Initialize Data for Filter Calibration --- */
   sensorInitialization();
   unsigned long startUpTime = millis();
-  while (startUpTime < 20000)
-  {
+  while (startUpTime < 20000) {
     startUpTime = millis();
     sensorStartupSampling();
   }
@@ -26,13 +31,6 @@ void loop() {
   sequenceSensorReadingMethod2();
 
   /* --- Apply Filter Algorithm --- */
-  LowPassFilter(sensor.tempC, &tempCFilter.newReading, &tempCFilter.oldReading, &sensor.tempC, BETA);
-  LowPassFilter(sensor.dissOxygen, &dissOxygenFilter.newReading, &dissOxygenFilter.oldReading,
-                &sensor.dissOxygen, BETA);
-  LowPassFilter(sensor.PH, &PHFilter.newReading, &PHFilter.oldReading,
-                &sensor.PH, BETA);
-  LowPassFilter(sensor.TDS, &TDSFilter.newReading, &TDSFilter.oldReading,
-                &sensor.TDS, BETA);
 
   sendDataToMainSerial(EVERY_ONE_SECOND);
 }

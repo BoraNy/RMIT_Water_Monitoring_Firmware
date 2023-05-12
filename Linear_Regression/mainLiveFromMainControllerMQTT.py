@@ -147,4 +147,5 @@ if __name__ == '__main__':
         predictedDissolvedOxygen = AIModel.predict(X_data)
         live.visualize(float(Temperature), float(pH), float(TDS), float(
             dissolvedOxygen), float(predictedDissolvedOxygen))
+        live.logDataToFile('realtime_data_logging')
         # client.loop_stop()
