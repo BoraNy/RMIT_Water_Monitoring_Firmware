@@ -1,0 +1,4 @@
+tk-tools
+ttkbootstrap
+matplotlib
+paho-mqtt
