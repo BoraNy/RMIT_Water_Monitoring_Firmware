@@ -2,11 +2,9 @@
 
 void SD_Card_Init(void) {
   if (!SD.begin(SD_Card_SS)) {
-    Serial.println("SD-Card not Found...!");
-    while (1)
-      ;
+    Serial.println("[FAILED] SD-CARD");
   } else {
-    Serial.print(" SD-Card Found...!");
+    Serial.print("[  OK  ] SD-CARD");
   }
 }
 
@@ -16,9 +14,9 @@ void writeFile(const char* path, const char* message) {
     Serial.printf(" Writting to %s", path);
     dataBackup.println(message);
     dataBackup.close();
-    Serial.println("Complete...!");
+    Serial.println("[  OK  ] WRITE-SD-CARD");
   } else {
-    Serial.println(" Error SD-Card...!");
+    Serial.println("[FAILED] WRITE-SD-CARD");
   }
 }
 

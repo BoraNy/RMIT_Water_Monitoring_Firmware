@@ -28,12 +28,12 @@ String Temperature;
 String messageStr = "";
 
 String serialData,
-       delimiter = ",";
+  delimiter = ",";
 String splited[4];
 
 /*---------------- MQTT Credentials ------------------*/
-const char* ssid = "Astro-X";                   /*---------- Wifi SSID ------------*/
-const char* password = "Heang187";              /*---------- Wifi Password -------------*/
+const char* ssid = "Faculty of Electronic & Telecom ";                   /*---------- Wifi SSID ------------*/
+const char* password = "office_999";              /*---------- Wifi Password -------------*/
 const char* mqttServer = "broker.hivemq.com";   /*---------- MQTT Broker --------------*/
 const char* mqttUserName = "NPIC_MQTT";         /*---------- MQTT Username--------------*/
 const char* mqttPassword = "NPIC_RMIT_Project"; /*---------- MQTT Password--------------*/

@@ -12,7 +12,6 @@ void setup() {
   Client.setServer(mqttServer, 1883);  //setting MQTT server
   Client.setCallback(callback);
   // SD_Card_Init();
-
 }
 
 void loop() {

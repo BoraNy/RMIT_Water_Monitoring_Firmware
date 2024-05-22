@@ -1,6 +1,7 @@
 #include "Parameter.h"
 
 void Setup_Wifi() { /*-------- Set up Wifi -----------*/
+  Serial.println("[ INIT ] WIFI-CONNECT");
   delay(5);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -8,21 +9,20 @@ void Setup_Wifi() { /*-------- Set up Wifi -----------*/
     Serial.print("-");
   }
   Serial.println("");
-  Serial.println("Wifi Connected");
-  Serial.println("IP Address: ");
+  Serial.print("[  OK  ] WIFI IP: ");
   Serial.println(WiFi.localIP());
 }
 
 void MQTT_Reconnect() { /*-------- MQTT Reconnecting -----------*/
   while (!Client.connected()) {
     if (Client.connect(clientID, mqttUserName, mqttPassword)) {
-      Serial.println("MQTT Connected");
+      Serial.println("[  OK  ] MQTT");
       Client.subscribe("Hello");
-      Serial.println("Topic Subcreibed");
+      Serial.println("[  OK  ] TOPIC-SUBSCRIBED");
     } else {
-      Serial.print(" Connection Fail, rc=");
+      Serial.print("[FAILED] CONNECTION, RC=");
       Serial.print(Client.state());
-      Serial.println(" retry again in 1 seconds");
+      Serial.println(" RETRY-AGAIN-IN-1-SECOND");
       delay(1000);  // wait 5sec and retry
     }
   }
@@ -34,7 +34,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println(topic);
   Serial.print("Message:");
   String data = "";
-  for (int i = 0; i < length; i++) {
+  for (unsigned int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
     data += (char)payload[i];
   }
@@ -65,7 +65,7 @@ void Send2MQTT(void) {
 
   //Serial.print("Public Data: ");
   //Serial.println(messageStr);
-  messageStr = ""; /*----------- Reset String --------------*/
-  serialData = ""; // <-- Erase Everything in Serial Data
+  messageStr = "";  /*----------- Reset String --------------*/
+  serialData = "";  // <-- Erase Everything in Serial Data
   delay(10);
 }

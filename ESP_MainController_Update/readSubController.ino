@@ -13,11 +13,11 @@
 */
 void check_serial(void) {
   if (!Serial) {
-    Serial.print(" Check Connection from Sub-controller");
+    Serial.print("[FAILED] SUB-SYSTEM-DATA");
     while (1)
       ;
   } else {
-    Serial.println(" Ready for Serial Read...!");
+    Serial.println("[  OK  ] SUB-SYSTEM-DATA");
   }
 }
 
@@ -25,7 +25,8 @@ void readSerial(void) {
   while (Serial.available() > 0)
     serialData = Serial.readStringUntil('\n');
 
-     Serial.println(serialData);
+  Serial.print("[  OK  ] DATA: ");
+  Serial.println(serialData);
 
   for (int i = 0; i < 4; i++) {
     splited[i] = serialData.substring(0, serialData.indexOf(delimiter));

@@ -2,11 +2,9 @@
 
 void RTC_Init(void) {
   if (!rtc.begin()) {
-    Serial.println("Couldn't find RealtimeClock");
-    while (1)
-      ;
+    Serial.println("[FAILED] RTC");
   } else {
-    Serial.print("Ready for RealtimeClock...!");
+    Serial.print("[  OK  ] RTC");
   }
   //rtc.adjust(DateTime(__DATE__, __TIME__));
 }
