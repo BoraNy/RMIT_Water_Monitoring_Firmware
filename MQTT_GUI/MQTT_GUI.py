@@ -167,7 +167,10 @@ def MQTT_Connection() -> mqtt_client:
             print("Successfully Connected to MQTT Broker!")
         else:
             print("Fialed to Connect to MQTT Broker")
-    client = mqtt_client.Client(mqtt_client.CallbackAPIVersion.VERSION1, client_ID)
+    try:
+        client = mqtt_client.Client(mqttClient.CallbackAPIVersion.VERSION1)
+    except:
+        client = mqtt_client.Client()
     client.username_pw_set(username, password)
     client.on_connect = on_connection
     client.connect(broker, port)
